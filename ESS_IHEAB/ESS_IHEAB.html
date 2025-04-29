@@ -163,8 +163,8 @@
 
     async function main() {
         try {
-            data_ESS = await fetchData('https://raw.githubusercontent.com/akjmcdowell/CertificateCalculator2/refs/heads/main/ESS_IHEAB/IHEAB.json');
-            data_postcodes = await fetchData('https://raw.githubusercontent.com/akjmcdowell/CertificateCalculator2/refs/heads/main/ESS_IHEAB/Postcodes.json');
+            data_ESS = await fetchData('https://raw.githubusercontent.com/akjmcdowell/Calculators/refs/heads/main/ESS_IHEAB/IHEAB.json');
+            data_postcodes = await fetchData('https://raw.githubusercontent.com/akjmcdowell/Calculators/refs/heads/main/ESS_IHEAB/Postcodes.json');
 
             if (!Array.isArray(data_ESS)) throw new Error('data_ESS is not an array');
 
