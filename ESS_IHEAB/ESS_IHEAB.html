@@ -203,14 +203,14 @@
 
             // Calculate ESC values
             
-            F16e_Z3.textContent = Savings_Z3 >= 60 ? Math.floor(F16_elec(CPL,HPElec_Z3,HPGas_Z3,CapacityFactor)) : 0;
-            F16e_Z5.textContent = Savings_Z5 >= 60 ? Math.floor(F16_elec(CPL,HPElec_Z5,HPGas_Z5,CapacityFactor)) : 0;
+            F16e_Z3.textContent = Savings_Z3 >= 60 ? Math.floor(F16_elec(CPL_Z3,HPElec_Z3,HPGas_Z3,CapacityFactor)) : 0;
+            F16e_Z5.textContent = Savings_Z5 >= 60 ? Math.floor(F16_elec(CPL_Z5,HPElec_Z5,HPGas_Z5,CapacityFactor)) : 0;
 
-            F16g_Z3.textContent = Savings_Z3 >= 60 ? Math.floor(F16_gas(CPL,HPElec_Z3,HPGas_Z3,CapacityFactor)) : 0;
-            F16g_Z5.textContent = Savings_Z5 >= 60 ? Math.floor(F16_gas(CPL,HPElec_Z5,HPGas_Z5,CapacityFactor)) : 0;
+            F16g_Z3.textContent = Savings_Z3 >= 60 ? Math.floor(F16_gas(CPL_Z3,HPElec_Z3,HPGas_Z3,CapacityFactor)) : 0;
+            F16g_Z5.textContent = Savings_Z5 >= 60 ? Math.floor(F16_gas(CPL_Z5,HPElec_Z5,HPGas_Z5,CapacityFactor)) : 0;
 
-            F17_Z3.textContent = Savings_Z3 >= 60 ? Math.floor(F17_new(CPL,HPElec_Z3,HPGas_Z3)) : 0;
-            F17_Z5.textContent = Savings_Z5 >= 60 ? Math.floor(F17_new(CPL,HPElec_Z5,HPGas_Z5)) : 0;
+            F17_Z3.textContent = Savings_Z3 >= 60 ? Math.floor(F17_new(CPL_Z3,HPElec_Z3,HPGas_Z3)) : 0;
+            F17_Z5.textContent = Savings_Z5 >= 60 ? Math.floor(F17_new(CPL_Z5,HPElec_Z5,HPGas_Z5)) : 0;
 
             // Append cells to the row
             row.appendChild(brandCell);
