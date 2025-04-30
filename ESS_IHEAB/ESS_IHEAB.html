@@ -18,37 +18,30 @@
 
 <br>
 
-<p>Select the year of installation and metropolitan or regional area to reflect the correct number of certificates for a given installation:</p>
+<p>Select the region, storage tank, zone, and existing installed capacity (if applicable) to reflect the correct number of certificates for a given installation:</p>
 
 <div class="filter-container">
-    <label for="region"><b>Choose region:</b></label>
-    <select id="region" name="region">
+    <label for="Region"><b>Choose Region:</b></label>
+    <select id="Region" name="Region">
         <option value="metropolitan">Metropolitan</option>
-        <option value="regional">Regional</option>
+        <option value="Regional">Regional</option>
     </select>
-
     <br>
 
-    <label for="year"><b>Year of Installation:</b></label>
-    <select id="year" name="year">
-        <option value="2024">2024</option>
-        <option value="2025">2025</option>
-    </select>
-
-    <label for="tank"><b>Storage tank:</b></label>
-    <select id="tank" name="tank">
+    <label for="Tank"><b>Storage Tank:</b></label>
+    <select id="Tank" name="Tank">
         <option value="new">Install new tank</option>
         <option value="existing">Use existing tank</option>
     </select>
 
-    <label for="zone"><b>Zone:</b></label>
-    <select id="zone" name="zone">
-        <option value="zone-4">Zone 3</option>
-        <option value="zone-5">Zone 5</option>
+    <label for="Zone"><b>Zone:</b></label>
+    <select id="Zone" name="Zone">
+        <option value="Zone-3">Zone 3</option>
+        <option value="Zone-5">Zone 5</option>
     </select>
 
-    <label for="existing-capacity"><b>Existing installed capacity (kW):</b></label>
-    <input type="text" id="existing-capacity" placeholder="3.6" />
+    <label for="ExistingCapacity"><b>Existing installed capacity (kW):</b></label>
+    <input type="text" id="ExistingCapacity" placeholder="3.6" />
 </div>
 
 <br>
@@ -103,14 +96,13 @@
     let data_postcodes = [];
     let currentSortColumn = -1; // Keep track of the currently sorted column
     let currentSortDirection = 'ascending'; // Keep track of the sorting direction
-
-    let GCCF,ECCF, RegionalFactor,Lifetime,year,tank,GWP,region,zone;
+    let GCCF,ECCF, RegionalFactor,Lifetime,year,Tank,GWP,Region,Zone,ExistingCapacity;
 
     main();
 
     async function main() {
         try {
-            data_ESS = await fetchData('https://raw.githubusercontent.com/akjmcdowell/Calculators/refs/heads/main/ESS_IHEAB/IHEAB.json');
+            data_ESS = await fetchData('https://raw.githubusercontent.com/akjmcdowell/Calculators/refs/heads/main/ESS_IHEAB/ESS_IHEAB.json');
             data_postcodes = await fetchData('https://raw.githubusercontent.com/akjmcdowell/Calculators/refs/heads/main/ESS_IHEAB/Postcodes.json');
 
             if (!Array.isArray(data_ESS)) throw new Error('data_ESS is not an array');
@@ -133,26 +125,22 @@
     }
 
     function updateESSParameters() {
-        region = document.getElementById("region").value;
-        year = document.getElementById("year").value;
-        tank = document.getElementById("tank").value;
-        ExistingCapacity = document.getElementById("existing-capacity").value;
-        zone = document.getElementById("zone").value;
+        Region = document.getElementById("Region").value;
+        year = 2025;
+        Tank = document.getElementById("Tank").value;
+        let ExistingCapacity = parseFloat(document.getElementById("ExistingCapacity").value);
+        if (isNaN(ExistingCapacity) || ExistingCapacity === 0) ExistingCapacity = 3.6;
 
+        Zone = document.getElementById("Zone").value;
         ECCF = 1.06;
         GCCF = 0.47;
         Lifetime = 12;
 
-        // Check if existingCapacity is 0 or an empty string, and set it to 3.65 if so
-        if (ExistingCapacity == 0 || ExistingCapacity === "") {
-            ExistingCapacity = 3.6;
-        }
-
-        switch (region) {
+        switch (Region) {
             case "metropolitan":
                 RegionalFactor = 1;
                 break;
-            case "regional":
+            case "Regional":
                 RegionalFactor = 1.03;
                 break;
         }
@@ -190,7 +178,7 @@
             brandCell.textContent = item.Brand;
 
             let modelCell = document.createElement('td');
-            modelCell.textContent = item.Model;
+            modelCell.textContent = item["Model Number"];
 
             let F16e_Z3 = document.createElement('td');
             let F16e_Z5 = document.createElement('td');
@@ -215,12 +203,13 @@
             // Append cells to the row
             row.appendChild(brandCell);
             row.appendChild(modelCell);
+            console.log(modelCell)
 
-            if (zone==='zone-3') {
+            if (Zone==='Zone-3') {
                 row.appendChild(F16e_Z3);  
                 row.appendChild(F16g_Z3);
                 row.appendChild(F17_Z3);
-            } else if (zone==='zone-5') {
+            } else if (Zone==='Zone-5') {
                 row.appendChild(F16e_Z5);  
                 row.appendChild(F16g_Z5);
                 row.appendChild(F17_Z5);
@@ -414,16 +403,16 @@ function updateTableForSelectedBrandsModels() {
             // Display the results
             resultDiv.innerHTML = `
                 <strong>State:</strong> ${postcodeInfo.State} <br>
-                <strong>Region:</strong> ${postcodeInfo.Location} <br>
+                <strong>Region:</strong> ${postcodeInfo.Region} <br>
                 <strong>ESS Zone:</strong> ${postcodeInfo.Zone_ESS} <br>
             `;
 
-            // Change the region dropdown selection based on the postcode
-            const regionDropdown = document.getElementById('region');
-            regionDropdown.value = postcodeInfo.region.toLowerCase(); // Convert to lowercase to match dropdown values
+            // Change the Region dropdown selection based on the postcode
+            const RegionDropdown = document.getElementById('Region');
+            RegionDropdown.value = postcodeInfo.Region.toLowerCase(); // Convert to lowercase to match dropdown values
 
             // Trigger change event to update the ESS parameters and table
-            regionDropdown.dispatchEvent(new Event('change'));
+            RegionDropdown.dispatchEvent(new Event('change'));
         } else {
             // Display error message
             resultDiv.innerHTML = `<strong>No data found for postcode:</strong> ${postcodeInput}`;
@@ -452,7 +441,7 @@ function updateTableForSelectedBrandsModels() {
     }
 
     function refreshCalculation() {
-        updateESSParameters(); // Update parameters on region change
+        updateESSParameters(); // Update parameters on Region change
         selectedBrand=document.getElementById('brand-filter').value;
         selectedModel=document.getElementById('brand-filter').value;
 
@@ -485,11 +474,10 @@ function updateTableForSelectedBrandsModels() {
     });
 
     // Event listeners for selection changes
-    document.getElementById('tank').addEventListener('change',refreshCalculation);
-    document.getElementById('zone').addEventListener('change',refreshCalculation);
-    document.getElementById('region').addEventListener('change',refreshCalculation);
-    document.getElementById('year').addEventListener('change',refreshCalculation);
-    document.getElementById('existing-capacity').addEventListener('change',refreshCalculation);
+    document.getElementById('Tank').addEventListener('change',refreshCalculation);
+    document.getElementById('Zone').addEventListener('change',refreshCalculation);
+    document.getElementById('Region').addEventListener('change',refreshCalculation);
+    document.getElementById('ExistingCapacity').addEventListener('change',refreshCalculation);
 
 function exportExcel() {
         // Get the table element
