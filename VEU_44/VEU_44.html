@@ -129,8 +129,8 @@
             ExistingCapacity = 3.6;
         }
 
-        zone = parseInt(document.getElementById("zone").value);
-        console.log(zone)
+        zone = document.getElementById("zone").value;
+        
 
         GEF = 0.05523;
         RFE = 5E-4;
@@ -243,11 +243,11 @@
             // console.log(HPGas_Z4)
             // console.log(CapacityFactor)
             console.log(zone)
-            if (zone==='4') {
+            if (zone==='zone-4') {
                 row.appendChild(VEEC_44Ai_Z4);  
                 row.appendChild(VEEC_44Aii_Z4);
                 row.appendChild(VEEC_44Aiii_Z4);
-            } else if (zone==='5') {
+            } else if (zone==='zone-5') {
                 row.appendChild(VEEC_44Ai_Z5);
                 row.appendChild(VEEC_44Aii_Z5);
                 row.appendChild(VEEC_44Aiii_Z5);
