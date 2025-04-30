@@ -1,0 +1,90 @@
+/* Load Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Fjalla+One&family=Open+Sans&display=swap');
+
+body {
+	font-size: 16px;
+	color: #111111;
+  font-family: 'Open Sans', sans-serif !important;
+}
+
+/* Base font setup */
+body.home {
+    font-family: 'Open Sans', sans-serif !important;
+    font-weight: 400;
+    color: #111111; /* Optional: light body text if you want */
+}
+
+/* Headings use Fjalla One */
+body.home h1 {
+    font-family: 'Fjalla One', sans-serif !important;
+    font-weight: 400;
+}
+
+/* Header background */
+#header, #header-core, #header-sticky, #header-sticky-core {
+    background-color: #111111 !important; /* Dark black background */
+}
+
+/* Top menu links */
+#header-links a,
+#header-sticky-links a {
+    color: #ffffff !important; /* White links */
+    font-family: 'Open Sans', sans-serif !important; /* Make sure top menu is Fjalla One */
+	font-weight: 400;
+}
+
+/* Top menu links hover */
+#header-links a:hover,
+#header-sticky-links a:hover {
+    color: #c35a20 !important; /* Burnt orange hover */
+}
+
+/* Dropdown menu background */
+.sub-menu {
+    background-color: #111111 !important; /* Black dropdown */
+}
+
+/* Dropdown menu links */
+.sub-menu a {
+    color: #ffffff !important; /* White dropdown text */
+    font-family: 'Fjalla One', sans-serif !important;
+}
+
+/* Dropdown menu hover links */
+.sub-menu a:hover {
+    color: #c35a20 !important; /* Burnt orange hover */
+}
+
+/* Buttons (optional improvement) */
+.wp-block-button__link {
+    font-family: 'Fjalla One', sans-serif !important;
+    background-color: #c35a20 !important; /* Button background */
+    color: #ffffff !important; /* Button text */
+    border-radius: 10px !important; /* Square button */
+}
+
+/* Responsive Menu Fixes */
+#header-responsive-inner a {
+    color: #ffffff !important;
+    font-family: 'Fjalla One', sans-serif !important;
+}
+
+#header-responsive-inner a:hover {
+    color: #c35a20 !important;
+}
+
+/* Specific to post titles in news grid if needed */
+h1, h2, h3, h4, .post-title, .entry-title {
+    color: #000000 !important;
+}
+
+/* Links hover color (optional: darker grey or underline) */
+a:hover {
+    color: #111111 !important; /* Optional burnt orange hover */
+
+}
+
+/* Links (titles) color black */
+a {
+    color: #000000;
+}
