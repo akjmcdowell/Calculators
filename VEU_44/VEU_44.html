@@ -4,71 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Air Source Heat Pump Models - VEU 44</title>
+    <link rel="stylesheet" href="https://akjmcdowell.github.io/Calculators/Styles/styles.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <style>
-        /* Table container styling */
-        .table-container {
-            width: 100%;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse; /* Ensures borders do not double */
-            margin-top: 20px;
-        }
-        td {
-            border: 1px solid #ccc; /* Adds border to cells */
-            padding: 10px;
-            text-align: center;
-            background-color: white; /* Background color for header */
-        }
-        th {
-            border: 1px solid #ccc; /* Adds border to cells */
-            padding: 10px;
-            text-align: center;
-            background-color: #f4f4f4; /* Background color for header */
-            cursor: pointer; /* Change cursor to pointer for clickable headers */
-        }
-        .arrow {
-            margin-left: 5px;
-            font-size: 0.8em; /* Smaller font size for arrows */
-        }
-        .ascending::after {
-            content: ' ▲'; /* Up arrow for ascending sort */
-        }
-        .descending::after {
-            content: ' ▼'; /* Down arrow for descending sort */
-        }
-        /* Responsive styles */
-        @media (max-width: 767px) {
-            .table-container {
-                overflow-x: auto; /* Allow horizontal scroll */
-                white-space: nowrap; /* Prevent text wrapping */
-            }
-            th, td {
-                padding: 8px; /* Adjust padding for smaller screens */
-                font-size: 14px; /* Adjust font size if necessary */
-            }
-        }
-        .filter-container {
-        display: flex;
-        align-items: center;
-        gap: 10px; /* Adjust as needed */
-        }
-    
-        .filter-container label,
-        .filter-container select {
-        display: inline-block;
-        }
-    </style>
 </head>
 <body>
-<p>Use this calculator to review the number of Victorian Energy Efficiency Certificates (VEECs) that are eligible for approved products on the <a href="https://www.veu-registry.vic.gov.au/Public/ProductRegistrySearch.aspx" target="_blank">VEU Registry</a> for the Commercial Heat Pump Water Heater activities.</p>
 
 <label for="postcode"><b>Postcode Lookup:</b></label>
 <input type="text" id="postcode" placeholder="Enter postcode" />
 <button id="lookup-button">Lookup</button>
 <div id="result"></div>
-
 <br>
 
 <p>Select the year of installation and metropolitan or regional area to reflect the correct number of certificates for a given installation:</p>
@@ -79,7 +23,6 @@
         <option value="metropolitan">Metropolitan</option>
         <option value="regional">Regional</option>
     </select>
-
     <br>
 
     <label for="year"><b>Year of Installation:</b></label>
@@ -103,7 +46,6 @@
     <label for="existing-capacity"><b>Existing installed capacity (kW):</b></label>
     <input type="text" id="existing-capacity" placeholder="3.6" />
 </div>
-
 <br>
 
 <p>Filter by one or more brands or models:</p>

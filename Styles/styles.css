@@ -132,3 +132,14 @@ th {
         font-size: 14px; /* Adjust font size if necessary */
     }
 }
+
+.filter-container {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Adjust as needed */
+  }
+
+.filter-container label,
+.filter-container select {
+display: inline-block;
+}

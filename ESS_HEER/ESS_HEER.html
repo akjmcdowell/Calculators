@@ -4,60 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Air Source Heat Pump Models - ESS D17/D19</title>
-    <style>
-        /* Table container styling */
-        .table-container {
-            width: 100%;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse; /* Ensures borders do not double */
-            margin-top: 20px;
-        }
-        td {
-            border: 1px solid #ccc; /* Adds border to cells */
-            padding: 10px;
-            text-align: center;
-            background-color: white; /* Background color for header */
-        }
-        th {
-            border: 1px solid #ccc; /* Adds border to cells */
-            padding: 10px;
-            text-align: center;
-            background-color: #f4f4f4; /* Background color for header */
-            cursor: pointer; /* Change cursor to pointer for clickable headers */
-        }
-        .arrow {
-            margin-left: 5px;
-            font-size: 0.8em; /* Smaller font size for arrows */
-        }
-        .ascending::after {
-            content: ' ▲'; /* Up arrow for ascending sort */
-        }
-        .descending::after {
-            content: ' ▼'; /* Down arrow for descending sort */
-        }
-        /* Responsive styles */
-        @media (max-width: 767px) {
-            .table-container {
-                overflow-x: auto; /* Allow horizontal scroll */
-                white-space: nowrap; /* Prevent text wrapping */
-            }
-            th, td {
-                padding: 8px; /* Adjust padding for smaller screens */
-                font-size: 14px; /* Adjust font size if necessary */
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="https://akjmcdowell.github.io/Calculators/Styles/styles.css">
 </head>
 <body>
-<p>Use this calculator to review the number of NSW Energy Saving Certificates (ESCs) eligible for approved products on the <a href="https://tessa.energysustainabilityschemes.nsw.gov.au/ipart?id=accepted_products" target="_blank">IPART TESSA Portal</a>.</p>
 
 <label><b>Postcode Lookup:</b></label>
 <input type="text" id="postcode" placeholder="Enter postcode" />
 <button id="lookup-button">Lookup</button>
 <div id="result"></div>
-
 <br>
 
 <p>Select the location (metropolitan or regional) to reflect the correct number of certificates for a given installation:</p>
@@ -69,7 +23,6 @@
         <option value="regional">Regional</option>
     </select>
 </div>
-
 <br>
 
 <p>Filter by one or more brands or models:</p>
@@ -88,21 +41,8 @@
       <!-- Options will be populated dynamically -->
     </select>
 </div>
-  
-<style>
-    .filter-container {
-      display: flex;
-      align-items: center;
-      gap: 10px; /* Adjust as needed */
-    }
-  
-    .filter-container label,
-    .filter-container select {
-      display: inline-block;
-    }
-</style>
-
 <br>
+
 <p>Click on any header to sort by alphabetical or numerical order.</p>
 
 <div class="table-container">
@@ -151,8 +91,8 @@
 
     async function main() {
         try {
-            data_ESS = await fetchData('https://raw.githubusercontent.com/akjmcdowell/Calculators/refs/heads/main/ESS/ESS.json');
-            data_postcodes = await fetchData('https://raw.githubusercontent.com/akjmcdowell/Calculators/refs/heads/main/VEU/Postcodes.json');
+            data_ESS = await fetchData('https://raw.githubusercontent.com/akjmcdowell/Calculators/refs/heads/main/ESS_HEER/ESS_HEER.json');
+            data_postcodes = await fetchData('https://raw.githubusercontent.com/akjmcdowell/Calculators/refs/heads/main/ESS_HEER/Postcodes.json');
 
             if (!Array.isArray(data_ESS)) throw new Error('data_ESS is not an array');
 
