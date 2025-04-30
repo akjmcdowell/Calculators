@@ -15,20 +15,13 @@
 <div id="result"></div>
 <br>
 
-<p>Select the year of installation and metropolitan or regional area to reflect the correct number of certificates for a given installation:</p>
+<p>Select the regional area (metropolitan or regional) to reflect the correct number of certificates for a given installation:</p>
 
 <div class="filter-container">
     <label for="location"><b>Choose Location:</b></label>
     <select id="location" name="location">
         <option value="metropolitan">Metropolitan</option>
         <option value="regional">Regional</option>
-    </select>
-    <br>
-
-    <label for="year"><b>Year of Installation:</b></label>
-    <select id="year" name="year">
-        <option value="2024">2024</option>
-        <option value="2025">2025</option>
     </select>
 </div>
 <br>
@@ -106,7 +99,7 @@
 
     function updateVEUParameters() {
         const location = document.getElementById("location").value;
-        const year = document.getElementById("year").value;
+        const year = 2025;
 
         switch (year) {
             case "2024":
@@ -118,8 +111,8 @@
                 EEFm = 0.393;
                 break;
             default:
-                EEF = 0.5334;
-                EEFm = 0.433;
+                EEF = 0.393;
+                EEFm = 0.393;
         }
 
         switch (location) {
