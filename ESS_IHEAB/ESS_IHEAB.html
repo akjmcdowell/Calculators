@@ -41,7 +41,7 @@
     </select>
 
     <label for="ExistingCapacity"><b>Existing installed capacity (kW):</b></label>
-    <input type="text" id="ExistingCapacity" placeholder="3.6" />
+    <input type="text" id="ExistingCapacity" value="3.6" placeholder="Enter existing capacity (kW)" />
 </div>
 
 <br>
@@ -61,13 +61,6 @@
       <!-- Options will be populated dynamically -->
     </select>
 </div>
-
-<p>Filter by total thermal storage volume:</p>
-<label for="min-storage"><b>Minimum storage volume:</b></label>
-<input type="text" id="min-storage" placeholder="0" />
-<label for="max-storage"><b>Minimum storage volume:</b></label>
-<input type="text" id="max-storage" placeholder="100000" />
-<button id="storage-filter">Filter</button>
 
 <br>
 <p>Click on any header to sort by alphabetical or numerical order.</p>
@@ -128,8 +121,8 @@
         Region = document.getElementById("Region").value;
         year = 2025;
         Tank = document.getElementById("Tank").value;
-        let ExistingCapacity = parseFloat(document.getElementById("ExistingCapacity").value);
-        if (isNaN(ExistingCapacity) || ExistingCapacity === 0) ExistingCapacity = 3.6;
+        ExistingCapacity = parseFloat(document.getElementById("ExistingCapacity").value);
+        //if (isNaN(ExistingCapacity) || ExistingCapacity === 0) ExistingCapacity = 3.6;
 
         Zone = document.getElementById("Zone").value;
         ECCF = 1.06;
@@ -170,7 +163,7 @@
             if (Capacity<=ExistingCapacity) {
                 CapacityFactor=1
             } else {
-                CapacityFactor=ExistingCapacity/Capacity;
+                CapacityFactor=ExistingCapacity/(Capacity+1e-9);
             }
             
             // Create individual cells (td) and assign values
@@ -190,6 +183,13 @@
             let F17_Z5 = document.createElement('td');
 
             // Calculate ESC values
+
+            // console.log(CPL_Z3)
+            // console.log(HPElec_Z3)
+            // console.log(HPGas_Z3)
+            // console.log(ExistingCapacity)
+            // console.log(CapacityFactor)
+            // console.log(Capacity)
             
             F16e_Z3.textContent = Savings_Z3 >= 60 ? Math.floor(F16_elec(CPL_Z3,HPElec_Z3,HPGas_Z3,CapacityFactor)) : 0;
             F16e_Z5.textContent = Savings_Z5 >= 60 ? Math.floor(F16_elec(CPL_Z5,HPElec_Z5,HPGas_Z5,CapacityFactor)) : 0;
@@ -203,7 +203,7 @@
             // Append cells to the row
             row.appendChild(brandCell);
             row.appendChild(modelCell);
-            console.log(modelCell)
+            
 
             if (Zone==='Zone-3') {
                 row.appendChild(F16e_Z3);  
@@ -275,8 +275,8 @@ function populateModelFilter(data, selectedBrands = []) {
     modelFilter.appendChild(allModelsOption);
 
     const filteredModels = selectedBrands.includes('all-brands') 
-        ? data.map(item => item.Model) // Show all models if "All Brands" is selected
-        : data.filter(item => selectedBrands.includes(item.Brand)).map(item => item.Model);
+        ? data.map(item => item["Model Number"]) // Show all models if "All Brands" is selected
+        : data.filter(item => selectedBrands.includes(item.Brand)).map(item => item["Model Number"]);
 
     const uniqueModels = [...new Set(filteredModels)].sort();
 
@@ -286,25 +286,6 @@ function populateModelFilter(data, selectedBrands = []) {
         option.textContent = model;
         modelFilter.appendChild(option);
     });
-}
-
-function updateTableForStorageSizeFilter() {
-    selectedBrands = [];
-    minVolume=document.getElementById('min-storage').value;
-    maxVolume=document.getElementById('max-storage').value;
-    // Filter the data by selected models and storage volume range
-    let filteredData = data_ESS.filter(item => {
-        // Check if the model is in the selected brands (if any) and storage volume is within the range
-        const Volume = item["Total System Tank Volume (L)"];
-        const isModelSelected = selectedBrands.length === 0 || selectedBrands.includes(item.Model);
-        const isVolumeInRange = Volume >= minVolume && Volume <= maxVolume;
-
-        // Return only items that match both conditions
-        return isModelSelected && isVolumeInRange;
-    });
-
-    // Call your function to update the table with the filtered data
-    populateTable(filteredData); // Update the table with filtered data
 }
 
 function updateTableForSelectedBrandsModels() {
@@ -318,14 +299,14 @@ function updateTableForSelectedBrandsModels() {
         filteredData = data_ESS;
     } else if (selectedBrands.includes('all-brands')) {
         // If "All Brands" is selected, show all models for selected models
-        filteredData = data_ESS.filter(item => selectedModels.includes(item.Model));
+        filteredData = data_ESS.filter(item => selectedModels.includes(item["Model Number"]));
     } else if (selectedModels.includes('all-models')) {
         // If "All Models" is selected, show all models for selected brands
         filteredData = data_ESS.filter(item => selectedBrands.includes(item.Brand));
     } else {
         // Filter by both selected brands and models
         filteredData = data_ESS.filter(item =>
-            selectedBrands.includes(item.Brand) && selectedModels.includes(item.Model)
+            selectedBrands.includes(item.Brand) && selectedModels.includes(item["Model Number"])
         );
     }
 
@@ -434,7 +415,7 @@ function updateTableForSelectedBrandsModels() {
         ? data_ESS
         : data_ESS.filter(item =>
             (selectedBrands.includes('all-brands') || selectedBrands.includes(item.Brand)) &&
-            (selectedModels.includes('all-models') || selectedModels.includes(item.Model))
+            (selectedModels.includes('all-models') || selectedModels.includes(item["Model Number"]))
         );
 
     populateTable(filteredData); // Update table with filtered data
@@ -456,7 +437,7 @@ function updateTableForSelectedBrandsModels() {
             ? data_ESS
             : data_ESS.filter(item => 
                 (selectedBrand === 'all-brands' || item.Brand === selectedBrand) && 
-                (selectedModel === 'all-models' || item.Model === selectedModel)
+                (selectedModel === 'all-models' || item["Model Number"] === selectedModel)
             );
             
         populateTable(filteredData); // Update table with filtered data
