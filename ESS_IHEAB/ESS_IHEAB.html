@@ -8,7 +8,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
 <body>
-    
+
 <p>Use this calculator to review the number of ESCs that are eligible for approved products on the <a href="https://tessa.energysustainabilityschemes.nsw.gov.au/ipart?id=accepted_products" target="_blank">ESS Registry</a> for the Commercial Heat Pump Water Heater activities.</p>
 
 <label for="postcode"><b>Postcode Lookup:</b></label>
@@ -209,8 +209,8 @@
             F16g_Z3.textContent = Savings_Z3 >= 60 ? Math.floor(F16_gas(CPL,HPElec_Z3,HPGas_Z3,CapacityFactor)) : 0;
             F16g_Z5.textContent = Savings_Z5 >= 60 ? Math.floor(F16_gas(CPL,HPElec_Z5,HPGas_Z5,CapacityFactor)) : 0;
 
-            F17_Z3.textContent = Savings_Z3 >= 60 ? Math.floor(F17_new(CPL,HPElec_Z3,HPGas_Z3,CapacityFactor)) : 0;
-            F17_Z5.textContent = Savings_Z5 >= 60 ? Math.floor(F17_new(CPL,HPElec_Z5,HPGas_Z5,CapacityFactor)) : 0;
+            F17_Z3.textContent = Savings_Z3 >= 60 ? Math.floor(F17_new(CPL,HPElec_Z3,HPGas_Z3)) : 0;
+            F17_Z5.textContent = Savings_Z5 >= 60 ? Math.floor(F17_new(CPL,HPElec_Z5,HPGas_Z5)) : 0;
 
             // Append cells to the row
             row.appendChild(brandCell);
@@ -239,7 +239,7 @@
         return ESC;
     }
 
-    function F16_elecCPL(HPElec,HPGas,CapacityFactor) {
+    function F16_elec(CPL,HPElec,HPGas,CapacityFactor) {
         RefElec = 365*0.905*1.05*CPL/1000;
         GasSavings = (-HPGas)*CapacityFactor*Lifetime/3.6;
         ElecSavings = (RefElec-HPElec)*CapacityFactor*Lifetime/3.6;
@@ -247,7 +247,7 @@
         return ESC;
     }
 
-    function F17_new(CPL,HPElec,HPGas,CapacityFactor) {
+    function F17_new(CPL,HPElec,HPGas) {
         RefElec = 365*0.905*1.05*CPL/1000;
         GasSavings = (RefElec/0.85-HPGas)*Lifetime/3.6;
         ElecSavings = (-HPElec)*Lifetime/3.6;

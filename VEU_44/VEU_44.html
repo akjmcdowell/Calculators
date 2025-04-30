@@ -271,19 +271,6 @@
     function VEEC_44Ai(CPL,HPElec,HPGas) {
         RefElec = 365*0.905*1.05*CPL/1000;
         VEEC = (GEF*(RefElec/RepEff)-GEF*HPGas-EEFm*RegionalFactor*(HPElec/3.6))*CapacityFactor*Lifetime+(1430-GWP)*RFE*RfrgCharge;
-        // console.log("GEF: " + GEF);
-        // console.log("RefElec: " + RefElec);
-        // console.log("RepEff: " + RepEff);
-        // console.log("HPGas:" + HPGas);
-        // console.log("EEFm: "+EEFm);
-        // console.log("RegionalFactor: "+RegionalFactor);
-        // console.log("HPElec: " + HPElec);
-        // console.log("CapacityFactor: " + CapacityFactor);
-        // console.log("RfrgCharge: " +RfrgCharge);
-        // console.log("GWP: " + GWP);
-        // console.log("RFE: " +RFE);
-        //console.log("VEEC 44Ai: "+VEEC);
-
         return VEEC;
     }
 
@@ -295,7 +282,7 @@
 
     function VEEC_44Aiii(CPL,HPElec,HPGas) {
         RefElec = 365*0.905*1.05*CPL/1000;
-        VEEC = (GEF*(RefElec/NewEff)-GEF*HPGas-EEFm*RegionalFactor*(HPElec/3.6))*CapacityFactor*Lifetime+(1430-GWP)*RFE*RfrgCharge;
+        VEEC = (GEF*(RefElec/NewEff)-GEF*HPGas-EEFm*RegionalFactor*(HPElec/3.6))*Lifetime+(1430-GWP)*RFE*RfrgCharge;
         return VEEC;
     }
 
