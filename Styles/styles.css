@@ -88,3 +88,47 @@ a:hover {
 a {
     color: #000000;
 }
+
+/* Table container styling */
+.table-container {
+    width: 100%;
+}
+table {
+    width: 100%;
+    border-collapse: collapse; /* Ensures borders do not double */
+    margin-top: 20px;
+}
+td {
+    border: 1px solid #ccc; /* Adds border to cells */
+    padding: 10px;
+    text-align: center;
+    background-color: white; /* Background color for header */
+}
+th {
+    border: 1px solid #ccc; /* Adds border to cells */
+    padding: 10px;
+    text-align: center;
+    background-color: #f4f4f4; /* Background color for header */
+    cursor: pointer; /* Change cursor to pointer for clickable headers */
+}
+.arrow {
+    margin-left: 5px;
+    font-size: 0.8em; /* Smaller font size for arrows */
+}
+.ascending::after {
+    content: ' ▲'; /* Up arrow for ascending sort */
+}
+.descending::after {
+    content: ' ▼'; /* Down arrow for descending sort */
+}
+/* Responsive styles */
+@media (max-width: 767px) {
+    .table-container {
+        overflow-x: auto; /* Allow horizontal scroll */
+        white-space: nowrap; /* Prevent text wrapping */
+    }
+    th, td {
+        padding: 8px; /* Adjust padding for smaller screens */
+        font-size: 14px; /* Adjust font size if necessary */
+    }
+}
