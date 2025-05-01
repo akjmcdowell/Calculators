@@ -11,15 +11,14 @@
 <br>
 
 <label for="postcode"><b>Postcode Lookup:</b></label>
-<input type="text" id="postcode" placeholder="Enter postcode" disabled />
+<input type="text" id="postcode" placeholder="Enter postcode" />
 <button id="lookup-button" disabled>Lookup</button>
 <div id="result"></div>
 <br>
 
 <div class="filter-container">
     <label for="year"><b>Year of Installation:</b></label>
-    <select id="year" name="year" disabled>
-        <option value="Register-Value">Register Value</option>
+    <select id="year" name="year">
         <option value="2025">2025</option>
         <option value="2026">2026</option>
         <option value="2027">2027</option>
@@ -32,7 +31,7 @@
 
 <div class="filter-container">
     <label for="DecommissionedProduct"><b>Select decommissioned product:</b></label>
-    <select id="DecommissionedProduct" name="DecommissionedProduct" disabled>
+    <select id="DecommissionedProduct" name="DecommissionedProduct">
         <option value="" selected>-- Select an option --</option>
         <option value="gas">Gas Water Heater</option>
         <option value="electric">Electric Water Heater</option>
@@ -463,12 +462,6 @@
         if (event.key === 'Enter') {
             lookupPostcode();
         }
-    });
-
-    document.getElementById('year').addEventListener('change', function() {
-        // Enable the next input (Decommissioned product)
-        document.getElementById('DecommissionedProduct').disabled = false;
-        updateTable();
     });
 
     document.getElementById('DecommissionedProduct').addEventListener('change', function() {
