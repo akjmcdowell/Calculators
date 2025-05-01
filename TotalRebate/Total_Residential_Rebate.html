@@ -14,7 +14,6 @@
 <input type="text" id="postcode" placeholder="Enter postcode" disabled />
 <button id="lookup-button" disabled>Lookup</button>
 <div id="result"></div>
-
 <br>
 
 <div class="filter-container">
@@ -29,7 +28,6 @@
         <option value="2030">2030</option>
     </select>
 </div>
-
 <br>
 
 <div class="filter-container">
@@ -40,7 +38,6 @@
         <option value="electric">Electric Water Heater</option>
     </select>
 </div>
-
 <br>
 
 
@@ -58,7 +55,6 @@
         <!-- Options will be populated dynamically -->
     </select>
 </div>
-
 <br>
 
 <button id="export-button" disabled>Export Data</button>
@@ -160,8 +156,6 @@
 
     function updateESSParameters() {
         DecommissionedProduct = document.getElementById("DecommissionedProduct").value;
-
-     
     }
 
     function populateTable(selectedBrand, selectedModel) {

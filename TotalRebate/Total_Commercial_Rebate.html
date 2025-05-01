@@ -15,12 +15,11 @@
 <input type="text" id="postcode" placeholder="Enter postcode" disabled />
 <button id="lookup-button" disabled>Lookup</button>
 <div id="result"></div>
-
 <br>
 
 <div class="filter-container">
     <label for="year"><b>Year of Installation:</b></label>
-    <select id="year" name="year" disabled>
+    <select id="year" name="year">
         <option value="2025">2025</option>
         <option value="2026">2026</option>
         <option value="2027">2027</option>
@@ -34,38 +33,35 @@
 
 <div class="filter-container">
     <label for="DecommissionedProduct"><b>Select decommissioned product:</b></label>
-    <select id="DecommissionedProduct" name="DecommissionedProduct" disabled>
+    <select id="DecommissionedProduct" name="DecommissionedProduct">
         <option value="" selected>-- Select an option --</option>
         <option value="new">New installation</option>
         <option value="gas">Gas Water Heater</option>
         <option value="electric">Electric Water Heater</option>
     </select>
 </div>
-
 <br>
 
 </div>
     <label for="existing-capacity"><b>Existing installed capacity (kW):</b></label>
-    <input type="text" id="existing-capacity" placeholder="3.6" disabled />
+    <input type="text" id="existing-capacity" placeholder="3.6" value="3.6"/>
 </div>
-
 <br>
 <br>
 
 <div class="filter-container"> 
-    <label for="brand-filter">Select Brand:</label>
-    <select id="brand-filter" disabled>
+    <label for="brand-filter"><b>Select Brand:</b></label>
+    <select id="brand-filter" >
         <option value="" selected>Select a Brand</option>
         <!-- Options will be populated dynamically -->
     </select>
   
-    <label for="model-filter">Select Model:</label>
-    <select id="model-filter" disabled>
+    <label for="model-filter"><b>Select Model:</b></label>
+    <select id="model-filter" >
         <option value="" selected>Select a Model</option>
         <!-- Options will be populated dynamically -->
     </select>
 </div>
-
 <br>
 
 <button id="export-button" disabled>Export Data</button>
@@ -557,11 +553,11 @@
         }
     });
 
-    document.getElementById('year').addEventListener('change', function() {
-        // Enable the next input (Decommissioned product)
-        document.getElementById('DecommissionedProduct').disabled = false;
-        updateTable();
-    });
+    // document.getElementById('year').addEventListener('change', function() {
+    //     // Enable the next input (Decommissioned product)
+    //     document.getElementById('DecommissionedProduct').disabled = false;
+    //     updateTable();
+    // });
 
     document.getElementById('DecommissionedProduct').addEventListener('change', function() {
         // Enable the next input (existing capacity)
