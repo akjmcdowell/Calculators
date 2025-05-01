@@ -133,115 +133,114 @@
         const row = document.createElement('tr');
 
         // Extract and parse values from the item object
-        let Bs_Z3 = parseFloat(item["Zone 3 Bs"]) || 0; // Parse as float, default to 0 if NaN
-        let Bs_Z5 = parseFloat(item["Zone 5 Bs"]) || 0;
-        let Be_Z3 = parseFloat(item["Zone 3 Be"]) || 0;
-        let Be_Z5 = parseFloat(item["Zone 5 Be"]) || 0;
+            let Bs_Z3 = parseFloat(item["Zone 3 Bs (GJ\/year)\u00a0"]) || 0; // Parse as float, default to 0 if NaN
+            let Bs_Z5 = parseFloat(item["Zone 5 Bs (GJ\/year)\u00a0"]) || 0;
+            let Be_Z3 = parseFloat(item["Zone 3 Be (GJ\/year)"]) || 0;
+            let Be_Z5 = parseFloat(item["Zone 5 Be (GJ\/year)"]) || 0;
 
-        // Create individual cells for brand, model, and ESC values
-        let brandCell = document.createElement('td');
-        brandCell.textContent = item.Brand;
+            // Create individual cells for brand, model, and ESC values
+            let brandCell = document.createElement('td');
+            brandCell.textContent = item.Brand;
 
-        let modelCell = document.createElement('td');
-        modelCell.textContent = item.Model;
+            let modelCell = document.createElement('td');
+            modelCell.textContent = item["Model Number"];
+			console.log(modelCell.textContent)
 
-        let ESC_D17_Z3 = document.createElement('td');
-        let ESC_D17_Z5 = document.createElement('td');
-        let ESC_D19_Z3 = document.createElement('td');
-        let ESC_D19_Z5 = document.createElement('td');
+            let ESC_D17_Z3 = document.createElement('td');
+            let ESC_D17_Z5 = document.createElement('td');
+            let ESC_D19_Z3 = document.createElement('td');
+            let ESC_D19_Z5 = document.createElement('td');
 
-        // Calculate ESC values for Zone 3 and Zone 5
-        ESC_D17_Z3.textContent = Bs_Z3 > 0 ? Math.floor((A_D17_Z3 - a_D17_Z3 * (Bs_Z3 + Be_Z3)) * ECCF * RNF) : 0;
-        ESC_D19_Z3.textContent = Bs_Z3 > 0 ? Math.floor((A_D19_Z3 - a_D19_Z3 * (Bs_Z3 + Be_Z3)) * ECCF * RNF + B_D19_Z3 * GCCF) : 0;
+            // Calculate ESC values for Zone 3 and Zone 5
+            ESC_D17_Z3.textContent = Bs_Z3 > 0 ? Math.floor((A_D17_Z3 - a_D17_Z3 * (Bs_Z3 + Be_Z3)) * ECCF * RNF) : 0;
+            ESC_D19_Z3.textContent = Bs_Z3 > 0 ? Math.floor((A_D19_Z3 - a_D19_Z3 * (Bs_Z3 + Be_Z3)) * ECCF * RNF + B_D19_Z3 * GCCF) : 0;
 
-        ESC_D17_Z5.textContent = Bs_Z5 > 0 ? Math.floor((A_D17_Z5 - a_D17_Z5 * (Bs_Z5 + Be_Z5)) * ECCF * RNF) : 0;
-        ESC_D19_Z5.textContent = Bs_Z5 > 0 ? Math.floor((A_D19_Z5 - a_D19_Z5 * (Bs_Z5 + Be_Z5)) * ECCF * RNF + B_D19_Z5 * GCCF) : 0;
+            ESC_D17_Z5.textContent = Bs_Z5 > 0 ? Math.floor((A_D17_Z5 - a_D17_Z5 * (Bs_Z5 + Be_Z5)) * ECCF * RNF) : 0;
+            ESC_D19_Z5.textContent = Bs_Z5 > 0 ? Math.floor((A_D19_Z5 - a_D19_Z5 * (Bs_Z5 + Be_Z5)) * ECCF * RNF + B_D19_Z5 * GCCF) : 0;
 
-        // Append cells to the row
-        row.appendChild(brandCell);
-        row.appendChild(modelCell);
-        row.appendChild(ESC_D17_Z3);
-        row.appendChild(ESC_D17_Z5);
-        row.appendChild(ESC_D19_Z3);
-        row.appendChild(ESC_D19_Z5);
+            console.log(ESC_D17_Z3)
 
-        // Append the row to the table body
-        tableBody.appendChild(row);
+            // Append cells to the row
+            row.appendChild(brandCell);
+            row.appendChild(modelCell);
+            row.appendChild(ESC_D17_Z3);
+            row.appendChild(ESC_D17_Z5);
+            row.appendChild(ESC_D19_Z3);
+            row.appendChild(ESC_D19_Z5);
 
-        // Log Bs and Be values for debugging
-        console.log(Bs_Z3 + Be_Z3);
-    });
-}
-
-
-    function populateBrandFilter(data) {
-    const brandFilter = document.getElementById('brand-filter');
-    brandFilter.innerHTML = ''; // Clear existing brands
-
-    // Add the default "All Brands" option
-    const allBrandsOption = document.createElement('option');
-    allBrandsOption.value = 'all-brands';
-    allBrandsOption.textContent = 'All Brands';
-    brandFilter.appendChild(allBrandsOption);
-
-    const uniqueBrands = [...new Set(data.map(item => item.Brand))].sort();
-
-    uniqueBrands.forEach(brand => {
-        const option = document.createElement('option');
-        option.value = brand;
-        option.textContent = brand;
-        brandFilter.appendChild(option);
-    });
-}
-
-function populateModelFilter(data, selectedBrands = []) {
-    const modelFilter = document.getElementById('model-filter');
-    modelFilter.innerHTML = ''; // Clear existing models
-
-    // Add the default "All Models" option
-    const allModelsOption = document.createElement('option');
-    allModelsOption.value = 'all-models';
-    allModelsOption.textContent = 'All Models';
-    modelFilter.appendChild(allModelsOption);
-
-    const filteredModels = selectedBrands.includes('all-brands') 
-        ? data.map(item => item.Model) // Show all models if "All Brands" is selected
-        : data.filter(item => selectedBrands.includes(item.Brand)).map(item => item.Model);
-
-    const uniqueModels = [...new Set(filteredModels)].sort();
-
-    uniqueModels.forEach(model => {
-        const option = document.createElement('option');
-        option.value = model;
-        option.textContent = model;
-        modelFilter.appendChild(option);
-    });
-}
-
-
-function updateTableForSelectedBrandsModels() {
-    const selectedBrands = Array.from(document.getElementById('brand-filter').selectedOptions).map(option => option.value);
-    const selectedModels = Array.from(document.getElementById('model-filter').selectedOptions).map(option => option.value);
-
-    let filteredData;
-
-    if (selectedBrands.includes('all-brands') && selectedModels.includes('all-models')) {
-        // Show all data if both "All Brands" and "All Models" are selected
-        filteredData = data_ESS;
-    } else if (selectedBrands.includes('all-brands')) {
-        // If "All Brands" is selected, show all models for selected models
-        filteredData = data_ESS.filter(item => selectedModels.includes(item.Model));
-    } else if (selectedModels.includes('all-models')) {
-        // If "All Models" is selected, show all models for selected brands
-        filteredData = data_ESS.filter(item => selectedBrands.includes(item.Brand));
-    } else {
-        // Filter by both selected brands and models
-        filteredData = data_ESS.filter(item =>
-            selectedBrands.includes(item.Brand) && selectedModels.includes(item.Model)
-        );
+            // Append the row to the table body
+            tableBody.appendChild(row);
+        });
     }
 
-    populateTable(filteredData); // Update the table with filtered data
+    function populateBrandFilter(data) {
+        const brandFilter = document.getElementById('brand-filter');
+        brandFilter.innerHTML = ''; // Clear existing brands
+
+        // Add the default "All Brands" option
+        const allBrandsOption = document.createElement('option');
+        allBrandsOption.value = 'all-brands';
+        allBrandsOption.textContent = 'All Brands';
+        brandFilter.appendChild(allBrandsOption);
+
+        const uniqueBrands = [...new Set(data.map(item => item.Brand))].sort();
+
+        uniqueBrands.forEach(brand => {
+            const option = document.createElement('option');
+            option.value = brand;
+            option.textContent = brand;
+            brandFilter.appendChild(option);
+        });
+    }
+
+    function populateModelFilter(data, selectedBrands = []) {
+        const modelFilter = document.getElementById('model-filter');
+        modelFilter.innerHTML = ''; // Clear existing models
+
+        // Add the default "All Models" option
+        const allModelsOption = document.createElement('option');
+        allModelsOption.value = 'all-models';
+        allModelsOption.textContent = 'All Models';
+        modelFilter.appendChild(allModelsOption);
+
+        const filteredModels = selectedBrands.includes('all-brands') 
+            ? data.map(item => item["Model Number"]) // Show all models if "All Brands" is selected
+            : data.filter(item => selectedBrands.includes(item.Brand)).map(item => item["Model Number"]);
+
+        const uniqueModels = [...new Set(filteredModels)].sort();
+
+        uniqueModels.forEach(model => {
+            const option = document.createElement('option');
+            option.value = model;
+            option.textContent = model;
+            modelFilter.appendChild(option);
+        });
+    }
+
+
+    function updateTableForSelectedBrandsModels() {
+        const selectedBrands = Array.from(document.getElementById('brand-filter').selectedOptions).map(option => option.value);
+        const selectedModels = Array.from(document.getElementById('model-filter').selectedOptions).map(option => option.value);
+
+        let filteredData;
+
+        if (selectedBrands.includes('all-brands') && selectedModels.includes('all-models')) {
+            // Show all data if both "All Brands" and "All Models" are selected
+            filteredData = data_ESS;
+        } else if (selectedBrands.includes('all-brands')) {
+            // If "All Brands" is selected, show all models for selected models
+            filteredData = data_ESS.filter(item => selectedModels.includes(item["Model Number"]));
+        } else if (selectedModels.includes('all-models')) {
+            // If "All Models" is selected, show all models for selected brands
+            filteredData = data_ESS.filter(item => selectedBrands.includes(item.Brand));
+        } else {
+            // Filter by both selected brands and models
+            filteredData = data_ESS.filter(item =>
+                selectedBrands.includes(item.Brand) && selectedModels.includes(item["Model Number"])
+            );
+        }
+
+        populateTable(filteredData); // Update the table with filtered data
 }
 
 

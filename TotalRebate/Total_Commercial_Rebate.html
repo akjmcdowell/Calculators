@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Commercial Heat Pump Water Heater Certificate Calculator</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+        /* Table container styling */
+        .table-container {
+            width: 100%;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse; /* Ensures borders do not double */
+            margin-top: 20px;
+        }
+        td {
+            border: 1px solid #ccc; /* Adds border to cells */
+            padding: 10px;
+            text-align: center;
+            background-color: white; /* Background color for header */
+        }
+        th {
+            border: 1px solid #ccc; /* Adds border to cells */
+            padding: 10px;
+            text-align: center;
+            background-color: #f4f4f4; /* Background color for header */
+            cursor: pointer; /* Change cursor to pointer for clickable headers */
+        }
+        .arrow {
+            margin-left: 5px;
+            font-size: 0.8em; /* Smaller font size for arrows */
+        }
+        .ascending::after {
+            content: ' ▲'; /* Up arrow for ascending sort */
+        }
+        .descending::after {
+            content: ' ▼'; /* Down arrow for descending sort */
+        }
+        /* Responsive styles */
+        @media (max-width: 767px) {
+            .table-container {
+                overflow-x: auto; /* Allow horizontal scroll */
+                white-space: nowrap; /* Prevent text wrapping */
+            }
+            th, td {
+                padding: 8px; /* Adjust padding for smaller screens */
+                font-size: 14px; /* Adjust font size if necessary */
+            }
+        }
+        .filter-container {
+            display: flex;
+            align-items: center;
+            gap: 10px; /* Adjust as needed */
+        }
+        .filter-container label,
+        .filter-container select {
+            display: inline-block;
+        }
+        /* Hide table initially */
+        #data-table {
+            display: none;
+        }
+        /* Disabled filter styling */
+        select:disabled,
+        input:disabled,
+        button:disabled {
+            background-color: #f4f4f4;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+<br>
+<p>Use this calculator to determine the number of STCs, VEECs and ESCs, a selected heat pump installed in a commercial premises will recieve. This calculator also estimates the total rebate based on the current certificate prices listed on <a href="https://www.demandmanager.com.au/certificate-prices/" target="_blank">Demand Manager</a>.</p>
+
+<label for="postcode"><b>Postcode Lookup:</b></label>
+<input type="text" id="postcode" placeholder="Enter postcode" disabled />
+<button id="lookup-button" disabled>Lookup</button>
+<div id="result"></div>
+
+<br>
+
+<div class="filter-container">
+    <label for="year"><b>Year of Installation:</b></label>
+    <select id="year" name="year" disabled>
+        <option value="Register-Value">Register Value</option>
+        <option value="2025">2025</option>
+        <option value="2026">2026</option>
+        <option value="2027">2027</option>
+        <option value="2028">2028</option>
+        <option value="2029">2029</option>
+        <option value="2030">2030</option>
+    </select>
+</div>
+
+<br>
+
+<div class="filter-container">
+    <label for="DecommissionedProduct"><b>Select decommissioned product:</b></label>
+    <select id="DecommissionedProduct" name="DecommissionedProduct" disabled>
+        <option value="" selected>-- Select an option --</option>
+        <option value="new">New installation</option>
+        <option value="gas">Gas Water Heater</option>
+        <option value="electric">Electric Water Heater</option>
+    </select>
+</div>
+
+<br>
+
+</div>
+    <label for="existing-capacity"><b>Existing installed capacity (kW):</b></label>
+    <input type="text" id="existing-capacity" placeholder="3.6" disabled />
+</div>
+
+<br>
+<br>
+
+<div class="filter-container"> 
+    <label for="brand-filter">Select Brand:</label>
+    <select id="brand-filter" disabled>
+        <option value="" selected>Select a Brand</option>
+        <!-- Options will be populated dynamically -->
+    </select>
+  
+    <label for="model-filter">Select Model:</label>
+    <select id="model-filter" disabled>
+        <option value="" selected>Select a Model</option>
+        <!-- Options will be populated dynamically -->
+    </select>
+</div>
+
+<br>
+
+<button id="export-button" disabled>Export Data</button>
+
+<div class="table-container">
+    <table id="data-table">
+        <thead>
+            <tr>
+                <th>Certificate<span class="arrow"></span></th>
+                <th>Current Certificate Value (AUD)<span class="arrow"></span></th>
+                <th>No. Certificates<span class="arrow"></span></th>
+                <th>Rebate (AUD)<span class="arrow"></span></th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Data will be populated here -->
+        </tbody>
+    </table>
+</div>
+
+<script>
+    //all data
+    let data_CertificatePrices = [];
+    let data_postcodes = [];
+    let all_brand_models = [];
+    let currentSortColumn = -1; // Keep track of the currently sorted column
+    let currentSortDirection = 'ascending'; // Keep track of the sorting direction
+
+    //CER data
+    let data_CER = [];
+    let Zone_4234 = null;
+    let Zone_CER = null; // Zone will be set after postcode lookup
+
+    //ESS data
+    let data_ESS = [];
+    let Zone_ESS = null; // Zone will be set after postcode lookup
+    let Region = null; // Region will be set after postcode lookup
+    let ESS_RegionalFactor = 1;
+
+    let GCCF, ECCF, ESS_Lifetime, DecommissionedProduct;
+
+    //VEU data
+    let data_VEU = [];
+    let Zone_VEU = null; // Zone will be set after postcode lookup
+    let EEFm, GEF, RFE, VEU_RegionalFactor,VEU_Lifetime,RepEff,NewEff,RfrgCharge, GWP;
+
+    main();
+
+    async function main() {
+        try {
+            // Fetch the ESS data, postcode data, certificate prices, and all brand models
+            data_CER = await fetchData('https://raw.githubusercontent.com/akjmcdowell/Calculators/main/CER/CER.json');
+            data_ESS = await fetchData('https://raw.githubusercontent.com/akjmcdowell/Calculators/main/ESS_IHEAB/IHEAB.json');
+            data_VEU = await fetchData('https://raw.githubusercontent.com/akjmcdowell/Calculators/main/VEU_44/VEU_44.json');
+            data_postcodes = await fetchData('https://raw.githubusercontent.com/akjmcdowell/Calculators/main/ESS_IHEAB/Postcodes.json');
+            data_CertificatePrices = await fetchData('https://raw.githubusercontent.com/akjmcdowell/Calculators/main/TotalRebate/Certificate_Prices.json');
+            
+            // Fetch the All_Brand_Models.json from the raw GitHub URL
+            const response = await fetch('https://raw.githubusercontent.com/akjmcdowell/Calculators/main/TotalRebate/AllComModels.json');
+            if (!response.ok) throw new Error('Failed to fetch brand models');
+            all_brand_models = await response.json();
+
+            // Populate filters but keep them disabled initially
+            populateBrandFilter(all_brand_models);
+
+            // Enable postcode input initially
+            document.getElementById('postcode').disabled = false;
+            document.getElementById('lookup-button').disabled = false;
+        } catch (error) {
+            console.error('Error during initialization:', error);
+        }
+    }
+
+    async function fetchData(URL) {
+        const response = await fetch(URL);
+        if (!response.ok) throw new Error('Network response was not ok ' + response.statusText);
+        return await response.json();
+    }
+    
+    function updateVEUParameters() {
+        GEF = 0.05523;
+        RFE = 5E-4;
+        RepEff = 0.788;
+        NewEff = 0.85;
+        EEFm = 0.393;
+
+        VEU_Lifetime = (DecommissionedProduct === 'new') ? 15 : 10;
+
+    }
+
+    function updateESSParameters() {
+        DecommissionedProduct = document.getElementById("DecommissionedProduct").value;
+        ExistingCapacity = document.getElementById("existing-capacity").value;
+
+        ECCF = 1.06;
+        GCCF = 0.47;
+        ESS_Lifetime = 12;
+
+        // Check if existingCapacity is 0 or an empty string, and set it to 3.65 if so
+        if (ExistingCapacity == 0 || ExistingCapacity === "") {
+            ExistingCapacity = 3.6;
+        }
+    }
+
+    function populateTable(selectedBrand, selectedModel) {
+        const tableBody = document.getElementById('data-table').getElementsByTagName('tbody')[0];
+        tableBody.innerHTML = ''; // Clear existing data
+
+        //CER
+        let foundInCER = false;
+        let CERitemData = null;
+
+        if (selectedBrand && selectedModel) {
+            CERitemData = data_CER.find(item => 
+                item.Brand.toLowerCase() === selectedBrand.toLowerCase() &&
+                item.Model.trim().toLowerCase() === selectedModel.trim().toLowerCase()
+            );
+            foundInCER = !!CERitemData;
+        }
+
+        const STCrow = document.createElement('tr');
+    
+        // Certificate type
+        let STCCell = document.createElement('td');
+        STCCell.textContent = "STC";
+        STCrow.appendChild(STCCell);
+
+        // STC Price
+        let STC_Price_Cell = document.createElement('td');
+        //let stcPrice = data_CertificatePrices.STC_Price || 'Not available';
+        let STC_Price = data_CertificatePrices.STC_Price ? data_CertificatePrices.STC_Price : 'Not available';
+        STC_Price_Cell.textContent =  `${STC_Price}`;
+        STCrow.appendChild(STC_Price_Cell);
+
+
+        const year = document.getElementById("year").value;
+        const DeemingPeriod = 2031 - (year === 'Register-Value' ? 2021 : year);
+        let num_STCs = 0;
+
+        if (foundInCER && CERitemData && Zone_CER) {
+            let zoneValue = CERitemData[`Zone ${Zone_CER}`];
+            num_STCs = Math.floor(zoneValue * DeemingPeriod / 10);
+        }
+        
+        // Number of Certificates
+        let num_STs_Cell = document.createElement('td');
+        num_STs_Cell.textContent = num_STCs;
+        STCrow.appendChild(num_STs_Cell);
+
+        // Rebate Calculation
+        let STCRebateCell = document.createElement('td');
+        let numericPrice = parseFloat(STC_Price.replace('$', ''));
+        let STCRebate = num_STCs * numericPrice;
+        STCRebateCell.textContent = `$${STCRebate.toFixed(2)}`;
+        STCrow.appendChild(STCRebateCell);
+
+        tableBody.appendChild(STCrow);    
+
+
+
+        // add escs
+        updateESSParameters();
+
+        // Check if the selected brand and model exist in data_ESS
+        let foundInESS = false;
+        let IHEABitemData = null;
+        
+        if (selectedBrand && selectedModel) {
+            IHEABitemData = data_ESS.find(item => 
+                item.Brand.toLowerCase() === selectedBrand.toLowerCase() && 
+                item["Model Number"].trim().toLowerCase() === selectedModel.trim().toLowerCase()
+            );
+            foundInESS = !!IHEABitemData;
+        }
+
+        const ESCrow = document.createElement('tr');
+
+        // Create and append the Certificate cell
+        let ESCCell = document.createElement('td');
+        ESCCell.textContent = "ESC";
+        ESCrow.appendChild(ESCCell);
+
+        // Add STC price from the certificate prices data
+        let ESC_Price_Cell = document.createElement('td');
+        let ESC_Price = data_CertificatePrices.ESC_Price ? data_CertificatePrices.ESC_Price : 'Not available';
+        ESC_Price_Cell.textContent = `${ESC_Price}`;
+        ESCrow.appendChild(ESC_Price_Cell);
+
+        // Calculate num_ESCs if the model is found in data_ESS
+        let num_ESCs = 0;
+        if (foundInESS && IHEABitemData && Zone_ESS && DecommissionedProduct && ExistingCapacity) {
+            const HPElec_Z3 = IHEABitemData["Zone 3 HPelec (GJ\/year)"];
+            const HPGas_Z3 = IHEABitemData["Zone 3 HPgas (GJ\/year)"];
+            const Savings_Z3 = IHEABitemData["Zone 3 Annual Energy Savings %"];
+            const CPL_Z3 = IHEABitemData["Zone 3 Peak Load (MJ\/day)\u00a0"];
+
+            let HPElec_Z5 = IHEABitemData["Zone 5 HPelec (GJ\/year)"];
+            let HPGas_Z5 = IHEABitemData["Zone 5 HPgas (GJ\/year)"];
+            let Savings_Z5 = IHEABitemData["Zone 5 Annual Energy Savings %\u00a0"];
+            let CPL_Z5 = IHEABitemData["Zone 5 Peak Load (MJ\/day)\u00a0"];
+
+            let Capacity_IHEAB = IHEABitemData["Total thermal capacity (kW)"];
+            let CapacityFactor_IHEAB = Capacity_IHEAB <= ExistingCapacity ? 1 : ExistingCapacity / Capacity_IHEAB;
+
+            // Calculate num_ESCs based on zone and tank
+            if (Zone_ESS == 3 && DecommissionedProduct === 'electric') {
+                num_ESCs = Savings_Z3 >= 60 ? Math.floor(F16_elec(CPL_Z3, HPElec_Z3, HPGas_Z3, CapacityFactor_IHEAB)) : 0;
+            } else if (Zone_ESS == 3 && DecommissionedProduct === 'gas') {
+                num_ESCs = Savings_Z3 >= 60 ? Math.floor(F16_gas(CPL_Z3, HPElec_Z3, HPGas_Z3, CapacityFactor_IHEAB)) : 0;
+            } else if (Zone_ESS == 3 && DecommissionedProduct === 'new') {
+                num_ESCs = Savings_Z3 >= 60 ? Math.floor(F17_new(CPL_Z3, HPElec_Z3, HPGas_Z3)) : 0;
+            } else if (Zone_ESS == 5 && DecommissionedProduct === 'electric') {
+                num_ESCs = Savings_Z5 >= 60 ? Math.floor(F16_elec(CPL_Z5, HPElec_Z5, HPGas_Z5, CapacityFactor_IHEAB)) : 0;
+            } else if (Zone_ESS == 5 && DecommissionedProduct === 'gas') {
+                num_ESCs = Savings_Z5 >= 60 ? Math.floor(F16_gas(CPL_Z5, HPElec_Z5, HPGas_Z5, CapacityFactor_IHEAB)) : 0;
+            } else if (Zone_ESS == 5 && DecommissionedProduct === 'new') {
+                num_ESCs = Savings_Z5 >= 60 ? Math.floor(F17_new(CPL_Z5, HPElec_Z5, HPGas_Z5)) : 0;
+            }
+        }
+
+        // Create and append the No. Certificates cell
+        let num_ESCs_Cell = document.createElement('td');
+        num_ESCs_Cell.textContent = num_ESCs;
+        ESCrow.appendChild(num_ESCs_Cell);
+
+        // Create and append the Rebate cell
+        let numericESC_Price = parseFloat(ESC_Price.replace('$', ''));
+        let ESC_Rebate_Cell = document.createElement('td');
+        let ESC_Rebate = numericESC_Price * num_ESCs;
+        ESC_Rebate_Cell.textContent = `$${ESC_Rebate.toFixed(2)}`;
+        ESCrow.appendChild(ESC_Rebate_Cell);
+
+        // Append the row to the table body
+        tableBody.appendChild(ESCrow);
+
+        // Show the table if all inputs are provided
+        if (Zone_ESS && DecommissionedProduct && ExistingCapacity) {
+            document.getElementById('data-table').style.display = 'table';
+            document.getElementById('export-button').disabled = false;
+        }
+
+        
+        // ADD VEECS
+        //check if brand model is in veu
+        // Check if the selected brand and model exist in data_ESS
+
+        updateVEUParameters();
+
+        let FoundInVEU44 = false;
+        let VEU44ItemData = null;
+        
+        if (selectedBrand && selectedModel) {
+            VEU44ItemData = data_VEU.find(item => 
+                item.Brand.toLowerCase() === selectedBrand.toLowerCase() && 
+                item.Model.trim().toLowerCase() === selectedModel.trim().toLowerCase()
+            );
+            FoundInVEU44 = !!VEU44ItemData;
+            console.log('found in vey')
+        }
+        
+        const VEECsRow = document.createElement('tr');
+
+        // Create and append the Certificate cell
+        let VEECCell = document.createElement('td');
+        VEECCell.textContent = "VEEC";
+        VEECsRow.appendChild(VEECCell);
+
+        // Add VEEC price from the certificate prices data
+        let VEEC_Price_Cell = document.createElement('td');
+        let VEEC_Price = data_CertificatePrices.VEEC_Price ? data_CertificatePrices.VEEC_Price : 'Not available';
+        VEEC_Price_Cell.textContent = `${VEEC_Price}`;
+        VEECsRow.appendChild(VEEC_Price_Cell);
+
+        let num_VEECs = 0;
+        if (FoundInVEU44 && VEU44ItemData && Zone_VEU && DecommissionedProduct && ExistingCapacity) {
+            let HPElec_Z4 = VEU44ItemData["Zone 4 HPelec (GJ\/year)"];
+            let HPGas_Z4 = VEU44ItemData["Zone 4 HPgas (GJ\/year)"];
+            let Savings_Z4 = VEU44ItemData["Zone 4 Annual Energy Savings (%)"];
+            let CPL_Z4 = VEU44ItemData["Zone 4 Peak Load (MJ\/day)"];
+
+            let HPElec_Z5 = VEU44ItemData["Zone 5 HPelec (GJ\/year)"];
+            let HPGas_Z5 = VEU44ItemData["Zone 5 HPgas (GJ\/year)"];
+            let Savings_Z5 = VEU44ItemData["Zone 5 Annual Energy Savings (%)"];
+            let CPL_Z5 = VEU44ItemData["Zone 5 Peak Load (MJ\/day)"];
+
+            let Capacity = VEU44ItemData["Total Heat Pump Thermal Capacity (kW)"];
+            let CapacityFactor = Capacity <= ExistingCapacity ? 1 : ExistingCapacity / Capacity;
+            let Refrigerant = VEU44ItemData["Refrigerant Type (GWP)"];
+            let RfrgCharge = VEU44ItemData["Refrigerant Charge (kg)"];
+            
+            switch (Refrigerant) {
+                case "R-290":
+                    GWP = 3;
+                    break;
+                case "R-744":
+                    GWP = 1;
+                    break;
+                case "R-134A":
+                    GWP = 1430;
+                    break;
+                case "R-32":
+                    GWP = 675;
+                    break;
+            }
+            
+            // Create individual cells (td) and assign values
+            
+
+            if (Zone_VEU == 4 && DecommissionedProduct === 'gas') {
+                num_VEECs = Savings_Z4 >= 60 ? Math.round(VEEC_44Ai(CPL_Z4,HPElec_Z4,HPGas_Z4, CapacityFactor, VEU_RegionalFactor, RfrgCharge, GWP)) : 0;
+            } else if (Zone_VEU == 4 && DecommissionedProduct === 'electric') {  
+                num_VEECs = Savings_Z4 >= 60 ? Math.round(VEEC_44Aii(CPL_Z4,HPElec_Z4,HPGas_Z4, CapacityFactor, VEU_RegionalFactor, RfrgCharge, GWP)) : 0;
+            } else if (Zone_VEU == 4 && DecommissionedProduct === 'new') {
+                num_VEECs = Savings_Z4 >= 60 ? Math.round(VEEC_44Aiii(CPL_Z4,HPElec_Z4,HPGas_Z4, VEU_RegionalFactor, RfrgCharge, GWP)) : 0;
+            } else if (Zone_VEU == 5 && DecommissionedProduct === 'gas') {
+                num_VEECs = Savings_Z5 >= 60 ? Math.round(VEEC_44Ai(CPL_Z5,HPElec_Z5,HPGas_Z5, CapacityFactor, VEU_RegionalFactor, RfrgCharge, GWP)) : 0;
+            } else if (Zone_VEU == 5 && DecommissionedProduct === 'electric') {
+                num_VEECs = Savings_Z5 >= 60 ? Math.round(VEEC_44Aii(CPL_Z5,HPElec_Z5,HPGas_Z5, CapacityFactor, VEU_RegionalFactor, RfrgCharge, GWP)) : 0;
+            } else if (Zone_VEU == 5 && DecommissionedProduct === 'new') {
+                num_VEECs = Savings_Z5 >= 60 ? Math.round(VEEC_44Aiii(CPL_Z5,HPElec_Z5,HPGas_Z5, VEU_RegionalFactor, RfrgCharge, GWP)) : 0;
+            }
+
+            
+        }
+
+        // Create and append the No. Certificates cell
+        let num_VEECs_Cell = document.createElement('td');
+        num_VEECs_Cell.textContent = num_VEECs;
+        VEECsRow.appendChild(num_VEECs_Cell);
+
+        // Create and append the Rebate cell
+        let numericVEEC_Price = parseFloat(VEEC_Price.replace('$', ''));
+        let VEEC_Rebate_Cell = document.createElement('td');
+        let VEEC_Rebate = numericVEEC_Price*num_VEECs
+        VEEC_Rebate_Cell.textContent = `$${VEEC_Rebate.toFixed(2)}`;
+        VEECsRow.appendChild(VEEC_Rebate_Cell);
+
+        tableBody.appendChild(VEECsRow);
+
+        //total rebate
+        const TotalRebateRow = document.createElement('tr');
+
+        //first two rows blank
+        let BlankCell1 = document.createElement('td');
+        BlankCell1.textContent = '';
+        TotalRebateRow.appendChild(BlankCell1);
+
+        let BlankCell2 = document.createElement('td');
+        BlankCell2.textContent = '';
+        TotalRebateRow.appendChild(BlankCell2);
+
+        let Cell3 = document.createElement('td');
+        Cell3.textContent = 'Total Rebate:';
+        TotalRebateRow.appendChild(Cell3);
+
+        let TotalRebateCell = document.createElement('td');
+        let TotalRebate = STCRebate + ESC_Rebate + VEEC_Rebate
+        TotalRebateCell.textContent = `$${TotalRebate.toFixed(2)}`;
+        TotalRebateRow.appendChild(TotalRebateCell);
+
+        tableBody.appendChild(TotalRebateRow);
+
+    }
+
+    function VEEC_44Ai(CPL,HPElec,HPGas, CapacityFactor, VEU_RegionalFactor, RfrgCharge, GWP) {
+        RefElec = 365*0.905*1.05*CPL/1000;
+        VEEC = (GEF*(RefElec/RepEff)-GEF*HPGas-EEFm*VEU_RegionalFactor*(HPElec/3.6))*CapacityFactor*VEU_Lifetime+(1430-GWP)*RFE*RfrgCharge;
+
+        return VEEC;
+
+    }
+
+    function VEEC_44Aii(CPL,HPElec,HPGas, CapacityFactor, VEU_RegionalFactor, RfrgCharge, GWP) {
+        RefElec = 365*0.905*1.05*CPL/1000;
+        VEEC = (EEFm*(RefElec/3.6)*VEU_RegionalFactor-GEF*HPGas-EEFm*VEU_RegionalFactor*(HPElec/3.6))*CapacityFactor*VEU_Lifetime+(1430-GWP)*RFE*RfrgCharge;
+        return VEEC;
+
+    }
+
+    function VEEC_44Aiii(CPL,HPElec,HPGas, VEU_RegionalFactor, RfrgCharge, GWP) {
+        RefElec = 365*0.905*1.05*CPL/1000;
+        VEEC = (GEF*(RefElec/NewEff)-GEF*HPGas-EEFm*VEU_RegionalFactor*(HPElec/3.6))*VEU_Lifetime+(1430-GWP)*RFE*RfrgCharge;
+        return VEEC;
+
+    }
+
+    function F16_gas(CPL, HPElec, HPGas, CapacityFactor) {
+        const RefElec = 365 * 0.905 * 1.05 * CPL / 1000;
+        const GasSavings = (RefElec / 0.788 - HPGas) * CapacityFactor * ESS_Lifetime / 3.6;
+        const ElecSavings = (-HPElec) * CapacityFactor * ESS_Lifetime / 3.6;
+        const ESC = GasSavings * GCCF + ElecSavings * ESS_RegionalFactor * ECCF;
+        return ESC;
+    }
+
+    function F16_elec(CPL, HPElec, HPGas, CapacityFactor) {
+        const RefElec = 365 * 0.905 * 1.05 * CPL / 1000;
+        const GasSavings = (-HPGas) * CapacityFactor * ESS_Lifetime / 3.6;
+        const ElecSavings = (RefElec - HPElec) * CapacityFactor * ESS_Lifetime / 3.6;
+        const ESC = GasSavings * GCCF + ElecSavings * ESS_RegionalFactor * ECCF;
+        return ESC;
+    }
+
+    function F17_new(CPL, HPElec, HPGas) {
+        const RefElec = 365 * 0.905 * 1.05 * CPL / 1000;
+        const GasSavings = (RefElec / 0.85 - HPGas) * ESS_Lifetime / 3.6;
+        const ElecSavings = (-HPElec) * ESS_Lifetime / 3.6;
+        const ESC = GasSavings * GCCF + ElecSavings * ESS_RegionalFactor * ECCF;
+        return ESC;
+    }
+
+    function populateBrandFilter(data) {
+        const brandFilter = document.getElementById('brand-filter');
+        brandFilter.innerHTML = '<option value="" selected>Select a Brand</option>'; // Clear existing brands
+
+        // Extract unique brands and sort them
+        const uniqueBrands = [...new Set(data.map(item => item.Brand.trim()))].sort((a, b) => a.localeCompare(b));
+
+        uniqueBrands.forEach(brand => {
+            const option = document.createElement('option');
+            option.value = brand;
+            option.textContent = brand;
+            brandFilter.appendChild(option);
+        });
+    }
+
+    function populateModelFilter(data, selectedBrand) {
+        const modelFilter = document.getElementById('model-filter');
+        modelFilter.innerHTML = '<option value="" selected>Select a Model</option>'; // Clear existing models
+
+        // Filter models by selected brand
+        const filteredModels = selectedBrand
+            ? data.filter(item => item.Brand === selectedBrand).map(item => item.Model.trim()) // Add trim here
+            : [];
+
+        // Extract unique models and sort them
+        const uniqueModels = [...new Set(filteredModels)].sort();
+
+        uniqueModels.forEach(model => {
+            const option = document.createElement('option');
+            option.value = model;
+            option.textContent = model;
+            modelFilter.appendChild(option);
+        });
+    }
+
+    function lookupPostcode() {
+        const postcodeInput = document.getElementById('postcode').value.trim();
+        const resultDiv = document.getElementById('result');
+
+        // Find the postcode in the data
+        const postcodeInfo = data_postcodes.find(item => item.Postcode === postcodeInput);
+        Zone_ESS = postcodeInfo ? postcodeInfo.Zone_ESS : null;
+        Region = postcodeInfo ? postcodeInfo.Location : null;
+        Zone_4234 = postcodeInfo ? postcodeInfo.Zone_4234 : null;
+        Zone_CER = Zone_4234.charAt(2)
+        Zone_VEU = postcodeInfo ? postcodeInfo.Zone_VEU : null;
+
+        if (Region === 'Metropolitan') {
+            ESS_RegionalFactor = 1;
+            VEU_RegionalFactor = 0.98;
+        } else if (Region === 'Regional') {
+            ESS_RegionalFactor = 1.03;
+            VEU_RegionalFactor = 1.04;
+        }
+
+        if (postcodeInfo) {
+            // Display the results
+            resultDiv.innerHTML = `
+                <strong>State:</strong> ${postcodeInfo.State} <br>
+                <strong>Region:</strong> ${postcodeInfo.Location} <br>
+                <strong>CER Zone:</strong> ${postcodeInfo.Zone_4234} <br>
+                <strong>ESS Zone:</strong> ${postcodeInfo.Zone_ESS} <br>
+                <strong>VEU Zone:</strong> ${postcodeInfo.Zone_VEU} <br>
+            `;
+
+            // Enable the next input (tank selection)
+            document.getElementById('year').disabled = false;
+        } else {
+            // Display error message
+            resultDiv.innerHTML = `<strong>No data found for postcode:</strong> ${postcodeInput}`;
+        }
+    }
+
+    // Event listeners
+    document.getElementById('lookup-button').addEventListener('click', lookupPostcode);
+    document.getElementById('postcode').addEventListener('keydown', function(event) {
+        if (event.key === 'Enter') {
+            lookupPostcode();
+        }
+    });
+
+    document.getElementById('year').addEventListener('change', function() {
+        // Enable the next input (Decommissioned product)
+        document.getElementById('DecommissionedProduct').disabled = false;
+        updateTable();
+    });
+
+    document.getElementById('DecommissionedProduct').addEventListener('change', function() {
+        // Enable the next input (existing capacity)
+        document.getElementById('existing-capacity').disabled = false;
+    });
+
+    document.getElementById('existing-capacity').addEventListener('change', function() {
+        // Enable the next input (brand filter)
+        document.getElementById('brand-filter').disabled = false;
+    });
+
+    document.getElementById('brand-filter').addEventListener('change', function() {
+        const selectedBrand = this.value;
+        populateModelFilter(all_brand_models, selectedBrand);
+
+        // Enable the next input (model filter)
+        document.getElementById('model-filter').disabled = false;
+        
+        // Update the table with the selected brand
+        //updateTableForSelectedBrandModel();
+    });
+
+    document.getElementById('model-filter').addEventListener('change', function() {
+        // Update the table with the selected model
+        updateTableForSelectedBrandModel();
+    });
+
+    function updateTableForSelectedBrandModel() {
+        const selectedBrand = document.getElementById('brand-filter').value;
+        const selectedModel = document.getElementById('model-filter').value;
+        
+        populateTable(selectedBrand, selectedModel);
+    }
+
+    function exportExcel() {
+        const table = document.getElementById('data-table');
+        const wb = XLSX.utils.book_new();
+        const ws = XLSX.utils.table_to_sheet(table);
+        XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+        const today = new Date();
+        const dateString = today.toISOString().split('T')[0];
+        XLSX.writeFile(wb, `ESC_IHEAB_data_${dateString}.xlsx`);
+    }
+
+    document.getElementById('export-button').addEventListener('click', function () {
+        exportExcel();
+    });
+</script>
+
+</body>
+</html>
