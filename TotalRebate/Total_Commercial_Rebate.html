@@ -4,72 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Commercial Heat Pump Water Heater Certificate Calculator</title>
+    <link rel="stylesheet" href="https://akjmcdowell.github.io/Calculators/Styles/styles.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <style>
-        /* Table container styling */
-        .table-container {
-            width: 100%;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse; /* Ensures borders do not double */
-            margin-top: 20px;
-        }
-        td {
-            border: 1px solid #ccc; /* Adds border to cells */
-            padding: 10px;
-            text-align: center;
-            background-color: white; /* Background color for header */
-        }
-        th {
-            border: 1px solid #ccc; /* Adds border to cells */
-            padding: 10px;
-            text-align: center;
-            background-color: #f4f4f4; /* Background color for header */
-            cursor: pointer; /* Change cursor to pointer for clickable headers */
-        }
-        .arrow {
-            margin-left: 5px;
-            font-size: 0.8em; /* Smaller font size for arrows */
-        }
-        .ascending::after {
-            content: ' ▲'; /* Up arrow for ascending sort */
-        }
-        .descending::after {
-            content: ' ▼'; /* Down arrow for descending sort */
-        }
-        /* Responsive styles */
-        @media (max-width: 767px) {
-            .table-container {
-                overflow-x: auto; /* Allow horizontal scroll */
-                white-space: nowrap; /* Prevent text wrapping */
-            }
-            th, td {
-                padding: 8px; /* Adjust padding for smaller screens */
-                font-size: 14px; /* Adjust font size if necessary */
-            }
-        }
-        .filter-container {
-            display: flex;
-            align-items: center;
-            gap: 10px; /* Adjust as needed */
-        }
-        .filter-container label,
-        .filter-container select {
-            display: inline-block;
-        }
-        /* Hide table initially */
-        #data-table {
-            display: none;
-        }
-        /* Disabled filter styling */
-        select:disabled,
-        input:disabled,
-        button:disabled {
-            background-color: #f4f4f4;
-            cursor: not-allowed;
-        }
-    </style>
 </head>
 <body>
 <br>
@@ -85,7 +21,6 @@
 <div class="filter-container">
     <label for="year"><b>Year of Installation:</b></label>
     <select id="year" name="year" disabled>
-        <option value="Register-Value">Register Value</option>
         <option value="2025">2025</option>
         <option value="2026">2026</option>
         <option value="2027">2027</option>
@@ -183,7 +118,7 @@
         try {
             // Fetch the ESS data, postcode data, certificate prices, and all brand models
             data_CER = await fetchData('https://raw.githubusercontent.com/akjmcdowell/Calculators/main/CER/CER.json');
-            data_ESS = await fetchData('https://raw.githubusercontent.com/akjmcdowell/Calculators/main/ESS_IHEAB/IHEAB.json');
+            data_ESS = await fetchData('https://raw.githubusercontent.com/akjmcdowell/Calculators/main/ESS_IHEAB/ESS_IHEAB.json');
             data_VEU = await fetchData('https://raw.githubusercontent.com/akjmcdowell/Calculators/main/VEU_44/VEU_44.json');
             data_postcodes = await fetchData('https://raw.githubusercontent.com/akjmcdowell/Calculators/main/ESS_IHEAB/Postcodes.json');
             data_CertificatePrices = await fetchData('https://raw.githubusercontent.com/akjmcdowell/Calculators/main/TotalRebate/Certificate_Prices.json');
