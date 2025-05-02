@@ -316,7 +316,7 @@
     },
     {
         "Brand":"Aquatech",
-        "Model":"DYNAMIC\/X8",
+        "Model":"Dynamic\/X8",
         "Zone 1":26,
         "Zone 2":25,
         "Zone 3":31,
@@ -2007,7 +2007,7 @@
         "Zone 5":25.0
     },
     {
-        "Brand":"Edson Global",
+        "Brand":"Edson",
         "Model":"EGS-AIO-300\/290-R",
         "Zone 1":27,
         "Zone 2":26,
@@ -2530,7 +2530,7 @@
     },
     {
         "Brand":"Everhot",
-        "Model":251180,
+        "Model":null,
         "Zone 1":25,
         "Zone 2":25,
         "Zone 3":30,
@@ -2980,7 +2980,7 @@
     },
     {
         "Brand":"Hydrotherm",
-        "Model":"DYNAMIC\/X8",
+        "Model":"Dynamic\/X8",
         "Zone 1":26,
         "Zone 2":25,
         "Zone 3":31,
@@ -3177,7 +3177,7 @@
         "Zone 5":32.0
     },
     {
-        "Brand":"IHEAT\/ISTORE",
+        "Brand":"iStore",
         "Model":"PASHW015-270LD-FL02-R290",
         "Zone 1":26,
         "Zone 2":25,
@@ -5527,7 +5527,7 @@
     },
     {
         "Brand":"Rheem",
-        "Model":551180,
+        "Model":null,
         "Zone 1":25,
         "Zone 2":25,
         "Zone 3":30,
@@ -5536,7 +5536,7 @@
     },
     {
         "Brand":"Rheem",
-        "Model":551270,
+        "Model":null,
         "Zone 1":26,
         "Zone 2":26,
         "Zone 3":31,
@@ -5545,7 +5545,7 @@
     },
     {
         "Brand":"Rheem",
-        "Model":551310,
+        "Model":null,
         "Zone 1":22,
         "Zone 2":22,
         "Zone 3":26,
@@ -5554,7 +5554,7 @@
     },
     {
         "Brand":"Rheem",
-        "Model":551325,
+        "Model":null,
         "Zone 1":23,
         "Zone 2":21,
         "Zone 3":27,
@@ -5563,7 +5563,7 @@
     },
     {
         "Brand":"Rheem",
-        "Model":551410,
+        "Model":null,
         "Zone 1":23,
         "Zone 2":22,
         "Zone 3":27,
@@ -5572,7 +5572,7 @@
     },
     {
         "Brand":"Rheem",
-        "Model":554325,
+        "Model":null,
         "Zone 1":23,
         "Zone 2":21,
         "Zone 3":27,
@@ -5581,7 +5581,7 @@
     },
     {
         "Brand":"Rheem",
-        "Model":554410,
+        "Model":null,
         "Zone 1":23,
         "Zone 2":21,
         "Zone 3":27,
@@ -7993,7 +7993,7 @@
     },
     {
         "Brand":"Vulcan",
-        "Model":651180,
+        "Model":null,
         "Zone 1":25,
         "Zone 2":25,
         "Zone 3":30,
