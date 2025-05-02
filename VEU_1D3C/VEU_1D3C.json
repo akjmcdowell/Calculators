@@ -340,7 +340,7 @@
     {
         "Product Category No.":"1D & 3C",
         "Brand":"Aquatech",
-        "Model":"Dynamic_X8",
+        "Model":"Dynamic\/X8",
         "AS\/NZS 4234 Version":2021,
         "Zone 4 Annual Energy Savings % (system load size)":66.1,
         "Zone 4 Bs (GJ\/year) (system load size)":5.6339,
@@ -3252,7 +3252,7 @@
     {
         "Product Category No.":"1D & 3C",
         "Brand":"Hydrotherm",
-        "Model":"Dynamic_X8",
+        "Model":"Dynamic\/X8",
         "AS\/NZS 4234 Version":2021,
         "Zone 4 Annual Energy Savings % (system load size)":66.1,
         "Zone 4 Bs (GJ\/year) (system load size)":5.6339,

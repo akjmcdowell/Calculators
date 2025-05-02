@@ -10,6 +10,7 @@
 <body>
 <br>
 <p>Use this calculator to determine the number of STCs, VEECs and ESCs, a selected heat pump installed in a commercial premises will recieve. This calculator also estimates the total rebate based on the current certificate prices listed on <a href="https://www.demandmanager.com.au/certificate-prices/" target="_blank">Demand Manager</a>.</p>
+<p>Please note that commercial heat pump water heater installations can only claim VEECs OR STCs as per the Commercial and Industrial Heat Pump Water Heater Activity Guide. The calculation assumes the installer will claim VEECs instead of STCs. </p>
 
 <label for="postcode"><b>Postcode Lookup:</b></label>
 <input type="text" id="postcode" placeholder="Enter postcode" disabled />
@@ -182,19 +183,7 @@
             foundInCER = !!CERitemData;
         }
 
-        const STCrow = document.createElement('tr');
-    
-        // Certificate type
-        let STCCell = document.createElement('td');
-        STCCell.textContent = "STC";
-        STCrow.appendChild(STCCell);
 
-        // STC Price
-        let STC_Price_Cell = document.createElement('td');
-        //let stcPrice = data_CertificatePrices.STC_Price || 'Not available';
-        let STC_Price = data_CertificatePrices.STC_Price ? data_CertificatePrices.STC_Price : 'Not available';
-        STC_Price_Cell.textContent =  `${STC_Price}`;
-        STCrow.appendChild(STC_Price_Cell);
 
 
         const year = document.getElementById("year").value;
@@ -206,19 +195,7 @@
             num_STCs = Math.floor(zoneValue * DeemingPeriod / 10);
         }
         
-        // Number of Certificates
-        let num_STs_Cell = document.createElement('td');
-        num_STs_Cell.textContent = num_STCs;
-        STCrow.appendChild(num_STs_Cell);
 
-        // Rebate Calculation
-        let STCRebateCell = document.createElement('td');
-        let numericPrice = parseFloat(STC_Price.replace('$', ''));
-        let STCRebate = num_STCs * numericPrice;
-        STCRebateCell.textContent = `$${STCRebate.toFixed(2)}`;
-        STCrow.appendChild(STCRebateCell);
-
-        tableBody.appendChild(STCrow);    
 
 
 
@@ -237,18 +214,7 @@
             foundInESS = !!IHEABitemData;
         }
 
-        const ESCrow = document.createElement('tr');
 
-        // Create and append the Certificate cell
-        let ESCCell = document.createElement('td');
-        ESCCell.textContent = "ESC";
-        ESCrow.appendChild(ESCCell);
-
-        // Add STC price from the certificate prices data
-        let ESC_Price_Cell = document.createElement('td');
-        let ESC_Price = data_CertificatePrices.ESC_Price ? data_CertificatePrices.ESC_Price : 'Not available';
-        ESC_Price_Cell.textContent = `${ESC_Price}`;
-        ESCrow.appendChild(ESC_Price_Cell);
 
         // Calculate num_ESCs if the model is found in data_ESS
         let num_ESCs = 0;
@@ -282,20 +248,7 @@
             }
         }
 
-        // Create and append the No. Certificates cell
-        let num_ESCs_Cell = document.createElement('td');
-        num_ESCs_Cell.textContent = num_ESCs;
-        ESCrow.appendChild(num_ESCs_Cell);
 
-        // Create and append the Rebate cell
-        let numericESC_Price = parseFloat(ESC_Price.replace('$', ''));
-        let ESC_Rebate_Cell = document.createElement('td');
-        let ESC_Rebate = numericESC_Price * num_ESCs;
-        ESC_Rebate_Cell.textContent = `$${ESC_Rebate.toFixed(2)}`;
-        ESCrow.appendChild(ESC_Rebate_Cell);
-
-        // Append the row to the table body
-        tableBody.appendChild(ESCrow);
 
         // Show the table if all inputs are provided
         if (Zone_ESS && DecommissionedProduct && ExistingCapacity) {
@@ -322,18 +275,7 @@
             console.log('found in vey')
         }
         
-        const VEECsRow = document.createElement('tr');
 
-        // Create and append the Certificate cell
-        let VEECCell = document.createElement('td');
-        VEECCell.textContent = "VEEC";
-        VEECsRow.appendChild(VEECCell);
-
-        // Add VEEC price from the certificate prices data
-        let VEEC_Price_Cell = document.createElement('td');
-        let VEEC_Price = data_CertificatePrices.VEEC_Price ? data_CertificatePrices.VEEC_Price : 'Not available';
-        VEEC_Price_Cell.textContent = `${VEEC_Price}`;
-        VEECsRow.appendChild(VEEC_Price_Cell);
 
         let num_VEECs = 0;
         if (FoundInVEU44 && VEU44ItemData && Zone_VEU && DecommissionedProduct && ExistingCapacity) {
@@ -386,8 +328,86 @@
 
             
         }
+        //stc
+        const STCrow = document.createElement('tr');
+    
+        // Certificate type
+        let STCCell = document.createElement('td');
+        STCCell.textContent = "STC";
+        STCrow.appendChild(STCCell);
+
+        // STC Price
+        let STC_Price_Cell = document.createElement('td');
+        //  let stcPrice = data_CertificatePrices.STC_Price || 'Not available';
+        let STC_Price = data_CertificatePrices.STC_Price ? data_CertificatePrices.STC_Price : 'Not available';
+        STC_Price_Cell.textContent =  `${STC_Price}`;
+        STCrow.appendChild(STC_Price_Cell);
+        
+        // Number of Certificates
+        let num_STs_Cell = document.createElement('td');
+        //update num stcs if there are veecs
+
+        if (num_VEECs > 0) {
+            num_STCs = 0
+        }
+        
+
+        num_STs_Cell.textContent = num_STCs;
+        STCrow.appendChild(num_STs_Cell);
+
+        // Rebate Calculation
+        let STCRebateCell = document.createElement('td');
+        let numericPrice = parseFloat(STC_Price.replace('$', ''));
+        let STCRebate = num_STCs * numericPrice;
+        STCRebateCell.textContent = `$${STCRebate.toFixed(2)}`;
+        STCrow.appendChild(STCRebateCell);
+
+        tableBody.appendChild(STCrow);
+        
+        //ESC
+        const ESCrow = document.createElement('tr');
+
+        // Create and append the Certificate cell
+        let ESCCell = document.createElement('td');
+        ESCCell.textContent = "ESC";
+        ESCrow.appendChild(ESCCell);
+
+        // Add STC price from the certificate prices data
+        let ESC_Price_Cell = document.createElement('td');
+        let ESC_Price = data_CertificatePrices.ESC_Price ? data_CertificatePrices.ESC_Price : 'Not available';
+        ESC_Price_Cell.textContent = `${ESC_Price}`;
+        ESCrow.appendChild(ESC_Price_Cell);
 
         // Create and append the No. Certificates cell
+        let num_ESCs_Cell = document.createElement('td');
+        num_ESCs_Cell.textContent = num_ESCs;
+        ESCrow.appendChild(num_ESCs_Cell);
+
+        // Create and append the Rebate cell
+        let numericESC_Price = parseFloat(ESC_Price.replace('$', ''));
+        let ESC_Rebate_Cell = document.createElement('td');
+        let ESC_Rebate = numericESC_Price * num_ESCs;
+        ESC_Rebate_Cell.textContent = `$${ESC_Rebate.toFixed(2)}`;
+        ESCrow.appendChild(ESC_Rebate_Cell);
+
+        // Append the row to the table body
+        tableBody.appendChild(ESCrow);
+
+        // Create and append the No. Certificates cell
+        const VEECsRow = document.createElement('tr');
+
+        // Create and append the Certificate cell
+        let VEECCell = document.createElement('td');
+        VEECCell.textContent = "VEEC";
+        VEECsRow.appendChild(VEECCell);
+
+        // Add VEEC price from the certificate prices data
+        let VEEC_Price_Cell = document.createElement('td');
+        let VEEC_Price = data_CertificatePrices.VEEC_Price ? data_CertificatePrices.VEEC_Price : 'Not available';
+        VEEC_Price_Cell.textContent = `${VEEC_Price}`;
+        VEECsRow.appendChild(VEEC_Price_Cell);
+
+
         let num_VEECs_Cell = document.createElement('td');
         num_VEECs_Cell.textContent = num_VEECs;
         VEECsRow.appendChild(num_VEECs_Cell);
