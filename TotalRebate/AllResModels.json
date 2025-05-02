@@ -24,6 +24,42 @@
         "Model":"aether HP270"
     },
     {
+        "Brand":"aether Australia",
+        "Model":"aether HP270C"
+    },
+    {
+        "Brand":"AGM ENERGY",
+        "Model":"AGMHP270W"
+    },
+    {
+        "Brand":"AGM ENERGY",
+        "Model":"AGMHP270W-E"
+    },
+    {
+        "Brand":"AGM ENERGY",
+        "Model":"AGMHP270W-EP"
+    },
+    {
+        "Brand":"AGM ENERGY",
+        "Model":"AGMHP270WP"
+    },
+    {
+        "Brand":"AGM ENERGY",
+        "Model":"AGMHP320W"
+    },
+    {
+        "Brand":"AGM ENERGY",
+        "Model":"AGMHP320W-E"
+    },
+    {
+        "Brand":"AGM ENERGY",
+        "Model":"AGMHP320W-EP"
+    },
+    {
+        "Brand":"AGM ENERGY",
+        "Model":"AGMHP320WP"
+    },
+    {
         "Brand":"Air Source Technologies",
         "Model":"AS-200-E-1"
     },
@@ -97,7 +133,15 @@
     },
     {
         "Brand":"AquaPlus",
+        "Model":"APAIO200C"
+    },
+    {
+        "Brand":"AquaPlus",
         "Model":"APAIO270"
+    },
+    {
+        "Brand":"AquaPlus",
+        "Model":"APAIO270C"
     },
     {
         "Brand":"Aquatech",
@@ -208,8 +252,12 @@
         "Model":"ARIHPWH-280"
     },
     {
+        "Brand":"Ariston",
+        "Model":"ARIHPWH-280\/2"
+    },
+    {
         "Brand":"Atlantic",
-        "Model":"ODYSSEO 2 - 232605"
+        "Model":"ODYSSEO 2"
     },
     {
         "Brand":"Aura Climate",
@@ -226,6 +274,10 @@
     {
         "Brand":"Bosch",
         "Model":"HP270-2E 0 FOOV\/S"
+    },
+    {
+        "Brand":"Brand",
+        "Model":"Model"
     },
     {
         "Brand":"Chofu Australia",
@@ -404,6 +456,62 @@
         "Model":"D2FHG4HW0C"
     },
     {
+        "Brand":"DUX",
+        "Model":"DHSA45-160"
+    },
+    {
+        "Brand":"DUX",
+        "Model":"DHSA45-180"
+    },
+    {
+        "Brand":"DUX",
+        "Model":"DHSA45-250"
+    },
+    {
+        "Brand":"DUX",
+        "Model":"DHSA45-315"
+    },
+    {
+        "Brand":"DUX",
+        "Model":"DHSA45-400"
+    },
+    {
+        "Brand":"DUX",
+        "Model":"DHSA45-N250"
+    },
+    {
+        "Brand":"DUX",
+        "Model":"DHSA45-N300"
+    },
+    {
+        "Brand":"DUX",
+        "Model":"DHSA45P-160"
+    },
+    {
+        "Brand":"DUX",
+        "Model":"DHSA45P-180"
+    },
+    {
+        "Brand":"DUX",
+        "Model":"DHSA45P-250"
+    },
+    {
+        "Brand":"DUX",
+        "Model":"DHSA45P-315"
+    },
+    {
+        "Brand":"DUX",
+        "Model":"DHSA45P-400"
+    },
+    {
+        "Brand":"DUX",
+        "Model":"DHSA45P-N250"
+    },
+    {
+        "Brand":"DUX",
+        "Model":"DHSA45P-N300"
+    },
+    {
         "Brand":"Eco Alliance",
         "Model":"ECO-155LE"
     },
@@ -517,6 +625,18 @@
     },
     {
         "Brand":"Ecogenica",
+        "Model":"EG-260RVW"
+    },
+    {
+        "Brand":"Ecogenica",
+        "Model":"EG-260RVW-2.0E"
+    },
+    {
+        "Brand":"Ecogenica",
+        "Model":"EG-260RVW-4.8EC"
+    },
+    {
+        "Brand":"Ecogenica",
         "Model":"EG-260RW"
     },
     {
@@ -561,7 +681,35 @@
     },
     {
         "Brand":"Ecogenica",
+        "Model":"EG-300RVW"
+    },
+    {
+        "Brand":"Ecogenica",
+        "Model":"EG-300RVW-2.0E"
+    },
+    {
+        "Brand":"Ecogenica",
+        "Model":"EG-300RVW-4.8EC"
+    },
+    {
+        "Brand":"Ecogenica",
         "Model":"EG-300RW"
+    },
+    {
+        "Brand":"Ecogenica",
+        "Model":"EG-300RW2"
+    },
+    {
+        "Brand":"Ecogenica",
+        "Model":"EG-300SVW"
+    },
+    {
+        "Brand":"Ecogenica",
+        "Model":"EG-300SVW-2.0E"
+    },
+    {
+        "Brand":"Ecogenica",
+        "Model":"EG-300SVW-4.8EC"
     },
     {
         "Brand":"Ecogenica",
@@ -597,6 +745,10 @@
     },
     {
         "Brand":"ECONOVA",
+        "Model":"ECON-215FREC-W"
+    },
+    {
+        "Brand":"ECONOVA",
         "Model":"ECON-260FRE-W"
     },
     {
@@ -610,6 +762,10 @@
     {
         "Brand":"ECONOVA",
         "Model":"ECON-260RVW-2.0E"
+    },
+    {
+        "Brand":"ECONOVA",
+        "Model":"ECON-260RVW-4.8EC"
     },
     {
         "Brand":"ECONOVA",
@@ -629,6 +785,10 @@
     },
     {
         "Brand":"ECONOVA",
+        "Model":"ECON-300FREC-W"
+    },
+    {
+        "Brand":"ECONOVA",
         "Model":"ECON-300RVW"
     },
     {
@@ -637,7 +797,19 @@
     },
     {
         "Brand":"ECONOVA",
+        "Model":"ECON-300RVW-4.8EC"
+    },
+    {
+        "Brand":"ECONOVA",
         "Model":"ECON-300RW"
+    },
+    {
+        "Brand":"ECONOVA",
+        "Model":"ECON-300RW2"
+    },
+    {
+        "Brand":"ECONOVA",
+        "Model":"ECON-300SVW"
     },
     {
         "Brand":"ECONOVA",
@@ -645,11 +817,15 @@
     },
     {
         "Brand":"ECONOVA",
+        "Model":"ECON-300SVW-4.8EC"
+    },
+    {
+        "Brand":"ECONOVA",
         "Model":"ECON-300SW-2.0E"
     },
     {
         "Brand":"ECONOVA",
-        "Model":"ECON-330FRE-WR"
+        "Model":"ECON-330FREC-WR"
     },
     {
         "Brand":"ECONOVA",
@@ -976,6 +1152,10 @@
         "Model":"HPR300E-1"
     },
     {
+        "Brand":"Emerald Energy",
+        "Model":"HPRX300E-1"
+    },
+    {
         "Brand":"ENEFT",
         "Model":"EL220AIO"
     },
@@ -1053,6 +1233,10 @@
     },
     {
         "Brand":"Everhot",
+        "Model":"241E280"
+    },
+    {
+        "Brand":"Everhot",
         "Model":"251180"
     },
     {
@@ -1080,6 +1264,14 @@
         "Model":"261410"
     },
     {
+        "Brand":"Everhot",
+        "Model":"265E310"
+    },
+    {
+        "Brand":"EVOHEAT",
+        "Model":"Evo 270-1"
+    },
+    {
         "Brand":"EVOHEAT",
         "Model":"EVO150-1"
     },
@@ -1098,10 +1290,6 @@
     {
         "Brand":"EVOHEAT",
         "Model":"EVO270-1"
-    },
-    {
-        "Brand":"EVOHEAT",
-        "Model":"Evo270-1 (NSW)"
     },
     {
         "Brand":"EVOHEAT",
@@ -1158,6 +1346,10 @@
     {
         "Brand":"GE",
         "Model":"GEH170GPAKSA"
+    },
+    {
+        "Brand":"GOMON",
+        "Model":"KRS60A-300V"
     },
     {
         "Brand":"GREE",
@@ -1740,8 +1932,44 @@
         "Model":"NuE60A-300V"
     },
     {
+        "Brand":"Nu Energy",
+        "Model":"NuE60A-300V "
+    },
+    {
         "Brand":"Oasis",
         "Model":"PASHW015-270LD"
+    },
+    {
+        "Brand":"Odis",
+        "Model":"OHWHP270GY"
+    },
+    {
+        "Brand":"Odis",
+        "Model":"OHWHP270GY-E"
+    },
+    {
+        "Brand":"Odis",
+        "Model":"OHWHP270GY-EP"
+    },
+    {
+        "Brand":"Odis",
+        "Model":"OHWHP270GYP"
+    },
+    {
+        "Brand":"Odis",
+        "Model":"OHWHP320GY"
+    },
+    {
+        "Brand":"Odis",
+        "Model":"OHWHP320GY-E"
+    },
+    {
+        "Brand":"Odis",
+        "Model":"OHWHP320GY-EP"
+    },
+    {
+        "Brand":"Odis",
+        "Model":"OHWHP320GYP"
     },
     {
         "Brand":"Onsen",
@@ -1965,6 +2193,10 @@
     },
     {
         "Brand":"Power Bay",
+        "Model":"AIO250HP-C"
+    },
+    {
+        "Brand":"Power Bay",
         "Model":"AIO300HP-R"
     },
     {
@@ -2149,11 +2381,23 @@
     },
     {
         "Brand":"Reclaim Energy",
+        "Model":"300REC25-H "
+    },
+    {
+        "Brand":"Reclaim Energy",
         "Model":"300REC25P"
     },
     {
         "Brand":"Reclaim Energy",
+        "Model":"300REC25P "
+    },
+    {
+        "Brand":"Reclaim Energy",
         "Model":"300REC25P-H"
+    },
+    {
+        "Brand":"Reclaim Energy",
+        "Model":"300REC25P-H "
     },
     {
         "Brand":"Reclaim Energy",
@@ -2352,6 +2596,70 @@
         "Model":"REHP-R290-270"
     },
     {
+        "Brand":"Reclaim Energy",
+        "Model":"REHP-R290-300"
+    },
+    {
+        "Brand":"Reclaim Energy",
+        "Model":"RESA45-160"
+    },
+    {
+        "Brand":"Reclaim Energy",
+        "Model":"RESA45-180"
+    },
+    {
+        "Brand":"Reclaim Energy",
+        "Model":"RESA45-250"
+    },
+    {
+        "Brand":"Reclaim Energy",
+        "Model":"RESA45-315"
+    },
+    {
+        "Brand":"Reclaim Energy",
+        "Model":"RESA45-400"
+    },
+    {
+        "Brand":"Reclaim Energy",
+        "Model":"RESA45-N250"
+    },
+    {
+        "Brand":"Reclaim Energy",
+        "Model":"RESA45-N300"
+    },
+    {
+        "Brand":"Reclaim Energy",
+        "Model":"RESA45P-160"
+    },
+    {
+        "Brand":"Reclaim Energy",
+        "Model":"RESA45P-180"
+    },
+    {
+        "Brand":"Reclaim Energy",
+        "Model":"RESA45P-250"
+    },
+    {
+        "Brand":"Reclaim Energy",
+        "Model":"RESA45P-315"
+    },
+    {
+        "Brand":"Reclaim Energy",
+        "Model":"RESA45P-400"
+    },
+    {
+        "Brand":"Reclaim Energy",
+        "Model":"RESA45P-N250"
+    },
+    {
+        "Brand":"Reclaim Energy",
+        "Model":"RESA45P-N300"
+    },
+    {
+        "Brand":"Rheem",
+        "Model":"541E280"
+    },
+    {
         "Brand":"Rheem",
         "Model":"551 270"
     },
@@ -2401,7 +2709,15 @@
     },
     {
         "Brand":"Rheem",
+        "Model":"565E315"
+    },
+    {
+        "Brand":"Rheem",
         "Model":"565E315R0"
+    },
+    {
+        "Brand":"Rheem",
+        "Model":"565E32A"
     },
     {
         "Brand":"Rheem",
@@ -2553,6 +2869,30 @@
     },
     {
         "Brand":"Rinnai",
+        "Model":"KSHP250M24L70"
+    },
+    {
+        "Brand":"Rinnai",
+        "Model":"KSHP250M24L70H"
+    },
+    {
+        "Brand":"Rinnai",
+        "Model":"KSHP315M24L70"
+    },
+    {
+        "Brand":"Rinnai",
+        "Model":"KSHP315M24L70H"
+    },
+    {
+        "Brand":"Rinnai",
+        "Model":"KSHP400M24L70"
+    },
+    {
+        "Brand":"Rinnai",
+        "Model":"KSHP400M24L70H"
+    },
+    {
+        "Brand":"Rinnai",
         "Model":"RIN250EHP"
     },
     {
@@ -2576,7 +2916,7 @@
         "Model":"GAUS-160FQS"
     },
     {
-        "Brand":"SANDEN",
+        "Brand":"Sanden",
         "Model":"GAUS-160FQTD"
     },
     {
@@ -2941,11 +3281,19 @@
     },
     {
         "Brand":"Solahart",
+        "Model":"280JE"
+    },
+    {
+        "Brand":"Solahart",
         "Model":"310HAV"
     },
     {
         "Brand":"Solahart",
         "Model":"325HAV"
+    },
+    {
+        "Brand":"Solahart",
+        "Model":"32SHE"
     },
     {
         "Brand":"Solahart",
@@ -3030,6 +3378,14 @@
     {
         "Brand":"Soltaro",
         "Model":"HPWSTR003"
+    },
+    {
+        "Brand":"Stiebel Eltron",
+        "Model":"SHP-O 200 Plus"
+    },
+    {
+        "Brand":"Stiebel Eltron",
+        "Model":"SHP-O 300 Plus"
     },
     {
         "Brand":"Stiebel Eltron",
@@ -3293,6 +3649,62 @@
     },
     {
         "Brand":"THERMANN",
+        "Model":"THSA45-160"
+    },
+    {
+        "Brand":"THERMANN",
+        "Model":"THSA45-180"
+    },
+    {
+        "Brand":"THERMANN",
+        "Model":"THSA45-250"
+    },
+    {
+        "Brand":"THERMANN",
+        "Model":"THSA45-315"
+    },
+    {
+        "Brand":"THERMANN",
+        "Model":"THSA45-400"
+    },
+    {
+        "Brand":"THERMANN",
+        "Model":"THSA45-N250"
+    },
+    {
+        "Brand":"THERMANN",
+        "Model":"THSA45-N300"
+    },
+    {
+        "Brand":"THERMANN",
+        "Model":"THSA45P-160"
+    },
+    {
+        "Brand":"THERMANN",
+        "Model":"THSA45P-180"
+    },
+    {
+        "Brand":"THERMANN",
+        "Model":"THSA45P-250"
+    },
+    {
+        "Brand":"THERMANN",
+        "Model":"THSA45P-315"
+    },
+    {
+        "Brand":"THERMANN",
+        "Model":"THSA45P-400"
+    },
+    {
+        "Brand":"THERMANN",
+        "Model":"THSA45P-N250"
+    },
+    {
+        "Brand":"THERMANN",
+        "Model":"THSA45P-N300"
+    },
+    {
+        "Brand":"THERMANN",
         "Model":"TIHP300"
     },
     {
@@ -3390,6 +3802,30 @@
     {
         "Brand":"Velocity",
         "Model":"V2FHG3000C"
+    },
+    {
+        "Brand":"Viessmann",
+        "Model":"Vitocal 151-A\u00a0 AWOT-E-AC-AF 151.A10"
+    },
+    {
+        "Brand":"Viessmann",
+        "Model":"Vitocal 151-A\u00a0 AWOT-E-AC-AF 151.A13"
+    },
+    {
+        "Brand":"Viessmann",
+        "Model":"Vitocal 151-A\u00a0 AWOT-E-AC-AF 151.A16"
+    },
+    {
+        "Brand":"Viessmann",
+        "Model":"Vitocal 151-A\u00a0 AWOT-M-E-AC-AF 151.A10"
+    },
+    {
+        "Brand":"Viessmann",
+        "Model":"Vitocal 151-A\u00a0 AWOT-M-E-AC-AF 151.A13"
+    },
+    {
+        "Brand":"Viessmann",
+        "Model":"Vitocal 151-A\u00a0 AWOT-M-E-AC-AF 151.A16"
     },
     {
         "Brand":"Viessmann",
