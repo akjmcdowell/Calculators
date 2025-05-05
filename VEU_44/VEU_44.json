@@ -6297,10 +6297,10 @@
         "AS\/NZS 2712 Certificate Expiry":1773792000000,
         "Refrigerant Type (GWP)":"R-290",
         "Refrigerant Charge (kg)":0.84,
-        "Status":"Pending Assessment",
-        "Application Date":1740614400000,
-        "Effective From":null,
-        "Effective To":null
+        "Status":"Approved",
+        "Application Date":null,
+        "Effective From":1544400000000,
+        "Effective To":1773792000000
     },
     {
         "Product Category No.":"44A",
@@ -6330,10 +6330,10 @@
         "AS\/NZS 2712 Certificate Expiry":1773792000000,
         "Refrigerant Type (GWP)":"R-290",
         "Refrigerant Charge (kg)":1.26,
-        "Status":"Pending Assessment",
-        "Application Date":1740614400000,
-        "Effective From":null,
-        "Effective To":null
+        "Status":"Approved",
+        "Application Date":null,
+        "Effective From":1544400000000,
+        "Effective To":1773792000000
     },
     {
         "Product Category No.":"44A",
@@ -6363,10 +6363,10 @@
         "AS\/NZS 2712 Certificate Expiry":1773792000000,
         "Refrigerant Type (GWP)":"R-290",
         "Refrigerant Charge (kg)":1.68,
-        "Status":"Pending Assessment",
-        "Application Date":1740614400000,
-        "Effective From":null,
-        "Effective To":null
+        "Status":"Approved",
+        "Application Date":null,
+        "Effective From":1544400000000,
+        "Effective To":1773792000000
     },
     {
         "Product Category No.":"44A",
