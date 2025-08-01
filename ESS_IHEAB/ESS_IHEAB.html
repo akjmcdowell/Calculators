@@ -190,6 +190,8 @@
             // console.log(ExistingCapacity)
             // console.log(CapacityFactor)
             // console.log(Capacity)
+			
+			console.log(modelCell)
             
             F16e_Z3.textContent = Savings_Z3 >= 60 ? Math.floor(F16_elec(CPL_Z3,HPElec_Z3,HPGas_Z3,CapacityFactor)) : 0;
             F16e_Z5.textContent = Savings_Z5 >= 60 ? Math.floor(F16_elec(CPL_Z5,HPElec_Z5,HPGas_Z5,CapacityFactor)) : 0;
@@ -206,12 +208,12 @@
             
 
             if (Zone==='Zone-3') {
-                row.appendChild(F16e_Z3);  
-                row.appendChild(F16g_Z3);
+                row.appendChild(F16g_Z3);  
+                row.appendChild(F16e_Z3);
                 row.appendChild(F17_Z3);
             } else if (Zone==='Zone-5') {
-                row.appendChild(F16e_Z5);  
-                row.appendChild(F16g_Z5);
+                row.appendChild(F16g_Z5);  
+                row.appendChild(F16e_Z5);
                 row.appendChild(F17_Z5);
             }
 
@@ -225,6 +227,14 @@
         GasSavings = (RefElec/0.788-HPGas)*CapacityFactor*Lifetime/3.6;
         ElecSavings = (-HPElec)*CapacityFactor*Lifetime/3.6;
         ESC = GasSavings*GCCF + ElecSavings*RegionalFactor*ECCF;
+		console.log(CPL)
+        console.log(HPElec)
+        console.log(HPGas)
+        console.log(CapacityFactor)
+		console.log(RefElec)
+		console.log(GasSavings)
+		console.log(CapacityFactor)
+		console.log(ESC)
         return ESC;
     }
 

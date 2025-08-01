@@ -131,9 +131,38 @@
             // Enable postcode input initially
             document.getElementById('postcode').disabled = false;
             document.getElementById('lookup-button').disabled = false;
+
+                        
+            // Add event listeners
+            setupEventListeners();
         } catch (error) {
             console.error('Error during initialization:', error);
         }
+    }
+
+    function setupEventListeners() {
+        document.getElementById('lookup-button').addEventListener('click', lookupPostcode);
+        document.getElementById('postcode').addEventListener('keydown', function(event) {
+            if (event.key === 'Enter') {
+                lookupPostcode();
+            }
+        });
+
+        document.getElementById('year').addEventListener('change', tryUpdateTable);
+        document.getElementById('DecommissionedProduct').addEventListener('change', function() {
+            document.getElementById('brand-filter').disabled = !this.value;
+            tryUpdateTable();
+        });
+
+        document.getElementById('brand-filter').addEventListener('change', function() {
+            const selectedBrand = this.value;
+            populateModelFilter(all_brand_models, selectedBrand);
+            document.getElementById('model-filter').disabled = !selectedBrand;
+            tryUpdateTable();
+        });
+
+        document.getElementById('model-filter').addEventListener('change', tryUpdateTable);
+        document.getElementById('export-button').addEventListener('click', exportExcel);
     }
 
     async function fetchData(URL) {
@@ -164,6 +193,22 @@
         // Check if existingCapacity is 0 or an empty string, and set it to 3.65 if so
         if (ExistingCapacity == 0 || ExistingCapacity === "") {
             ExistingCapacity = 3.6;
+        }
+    }
+
+    function tryUpdateTable() {
+        // Check if we have all required data to populate the table
+        const hasPostcodeData = Zone_CER && Zone_ESS && Zone_VEU;
+        const hasYear = document.getElementById('year').value;
+        const hasDecommissionedProduct = document.getElementById('DecommissionedProduct').value;
+        const hasModel = document.getElementById('model-filter').value;
+        
+        if (hasPostcodeData && hasYear && hasDecommissionedProduct && hasModel) {
+            const selectedBrand = document.getElementById('brand-filter').value;
+            const selectedModel = document.getElementById('model-filter').value;
+            populateTable(selectedBrand, selectedModel);
+            document.getElementById('data-table').style.display = 'table';
+            document.getElementById('export-button').disabled = false;
         }
     }
 
@@ -250,11 +295,7 @@
 
 
 
-        // Show the table if all inputs are provided
-        if (Zone_ESS && DecommissionedProduct && ExistingCapacity) {
-            document.getElementById('data-table').style.display = 'table';
-            document.getElementById('export-button').disabled = false;
-        }
+
 
         
         // ADD VEECS
@@ -536,7 +577,7 @@
         Zone_ESS = postcodeInfo ? postcodeInfo.Zone_ESS : null;
         Region = postcodeInfo ? postcodeInfo.Location : null;
         Zone_4234 = postcodeInfo ? postcodeInfo.Zone_4234 : null;
-        Zone_CER = Zone_4234.charAt(2)
+        Zone_CER = Zone_4234 ? Zone_4234.charAt(2) : null;
         Zone_VEU = postcodeInfo ? postcodeInfo.Zone_VEU : null;
 
         if (Region === 'Metropolitan') {
@@ -557,60 +598,21 @@
                 <strong>VEU Zone:</strong> ${postcodeInfo.Zone_VEU} <br>
             `;
 
-            // Enable the next input (tank selection)
+
+            // Enable the next inputs
             document.getElementById('year').disabled = false;
+            document.getElementById('DecommissionedProduct').disabled = false;
+            
+            // Try to update the table if we have enough data
+            tryUpdateTable();
         } else {
             // Display error message
             resultDiv.innerHTML = `<strong>No data found for postcode:</strong> ${postcodeInput}`;
         }
     }
 
-    // Event listeners
-    document.getElementById('lookup-button').addEventListener('click', lookupPostcode);
-    document.getElementById('postcode').addEventListener('keydown', function(event) {
-        if (event.key === 'Enter') {
-            lookupPostcode();
-        }
-    });
+   
 
-    // document.getElementById('year').addEventListener('change', function() {
-    //     // Enable the next input (Decommissioned product)
-    //     document.getElementById('DecommissionedProduct').disabled = false;
-    //     updateTable();
-    // });
-
-    document.getElementById('DecommissionedProduct').addEventListener('change', function() {
-        // Enable the next input (existing capacity)
-        document.getElementById('existing-capacity').disabled = false;
-    });
-
-    document.getElementById('existing-capacity').addEventListener('change', function() {
-        // Enable the next input (brand filter)
-        document.getElementById('brand-filter').disabled = false;
-    });
-
-    document.getElementById('brand-filter').addEventListener('change', function() {
-        const selectedBrand = this.value;
-        populateModelFilter(all_brand_models, selectedBrand);
-
-        // Enable the next input (model filter)
-        document.getElementById('model-filter').disabled = false;
-        
-        // Update the table with the selected brand
-        //updateTableForSelectedBrandModel();
-    });
-
-    document.getElementById('model-filter').addEventListener('change', function() {
-        // Update the table with the selected model
-        updateTableForSelectedBrandModel();
-    });
-
-    function updateTableForSelectedBrandModel() {
-        const selectedBrand = document.getElementById('brand-filter').value;
-        const selectedModel = document.getElementById('model-filter').value;
-        
-        populateTable(selectedBrand, selectedModel);
-    }
 
     function exportExcel() {
         const table = document.getElementById('data-table');
@@ -622,9 +624,6 @@
         XLSX.writeFile(wb, `ESC_IHEAB_data_${dateString}.xlsx`);
     }
 
-    document.getElementById('export-button').addEventListener('click', function () {
-        exportExcel();
-    });
 </script>
 
 </body>

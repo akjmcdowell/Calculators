@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Air conditioners 6F-6G </title>
+    <link rel="stylesheet" href="https://akjmcdowell.github.io/Calculators/Styles/styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+</head>
+<body>
+
+<label for="postcode"><b>Postcode Lookup:</b></label>
+<input type="text" id="postcode" placeholder="Enter postcode" />
+<button id="lookup-button">Lookup</button>
+<div id="result"></div>
+<br>
+
+<p>Select the regional area (metropolitan or regional) to reflect the correct number of certificates for a given installation:</p>
+
+<div class="filter-container">
+    <label for="region"><b>Choose region:</b></label>
+    <select id="region" name="region">
+        <option value="metropolitan">Metropolitan</option>
+        <option value="regional">Regional</option>
+    </select>
+    <br>
+
+    <label for="Climatic_Region"><b>Climatic Region:</b></label>
+    <select id="Climatic_Region" name="Climatic_Region">
+        <option value="Cold">Cold</option>
+        <option value="Hot">Hot</option>
+        <option value="Mild">Mild</option>
+    </select>
+
+    <br>
+
+    <label for="Sector"><b>Sector:</b></label>
+    <select id="Sector" name="Sector">
+        <option value="Residential">Residential</option>
+        <option value="Business">Business</option>
+    </select>
+
+    <label for="indoor-unit-cooling-capacity"><b>Total cooling capacity (kW) of indoor units installed (for multi-split system) 1:</b></label>
+    <input type="text" id="indoor-unit-cooling-capacity" value = "3.6" placeholder="3.6" />
+
+    <label for="indoor-unit-heating-capacity"><b>Total heating capacity (kW) of indoor units installed (for multi-split system) 1:</b></label>
+    <input type="text" id="indoor-unit-heating-capacity" value = "3.6" placeholder="3.6" />
+
+</div>
+<br>
+
+<p>Filter by one or more brands or models:</p>
+<p><i>Hint: hold down Ctrl key to select multiple brands and/or models.</i></p>
+ <div class="filter-container"> 
+    <label for="brand-filter">Filter by Brand(s):</label>
+    <select id="brand-filter" multiple size="10">
+      <option value="all-brands" selected>All Brands</option>
+      <!-- Options will be populated dynamically -->
+    </select>
+  
+    <label for="model-filter">Filter by Model(s):</label>
+    <select id="model-filter" multiple size="10">
+      <option value="all-models" selected>All Models</option>
+      <!-- Options will be populated dynamically -->
+    </select>
+</div>
+
+<!--p>Filter by total thermal storage volume:</p>
+<label for="min-storage"><b>Minimum storage volume:</b></label>
+<input type="text" id="min-storage" placeholder="0" />
+<label for="max-storage"><b>Maximum storage volume:</b></label>
+<input type="text" id="max-storage" placeholder="100000" />
+<button id="storage-filter">Filter</button-->
+
+<br>
+<p>Click on any header to sort by alphabetical or numerical order.</p>
+<button id="export-button">Export Data</button>
+
+<div class="table-container">
+    <table id="data-table">
+        <thead>
+            <tr>
+                <th onclick="sortTable(0, this)">Brand<span class="arrow"></span></th>
+                <th onclick="sortTable(1, this)">Model<span class="arrow"></span></th>
+                <th onclick="sortTable(2, this)">Product Category No.<span class="arrow"></span></th>
+                <th onclick="sortTable(3, this)">Replace Electric (i)<span class="arrow"></span></th>
+                <th onclick="sortTable(4, this)">Replace Electric (ii)<span class="arrow"></span></th>
+                <th onclick="sortTable(5, this)">Replace Electric (iii)<span class="arrow"></span></th>
+                <th onclick="sortTable(6, this)">Replace Electric (iv)<span class="arrow"></span></th>
+                <th onclick="sortTable(7, this)">Replace Ducted Reverse (v)<span class="arrow"></span></th>
+                <th onclick="sortTable(8, this)">Replace Non-Ducted Reverse (vi)<span class="arrow"></span></th>
+                <th onclick="sortTable(9, this)">Replace Ducted Gas (vii)<span class="arrow"></span></th>
+                <th onclick="sortTable(10, this)">Replace Ducted Gas (viii)<span class="arrow"></span></th>
+                <th onclick="sortTable(11, this)">Replace Non-Ducted Gas (ix)<span class="arrow"></span></th>
+                <th onclick="sortTable(12, this)">Replace Non-Ducted Gas (x)<span class="arrow"></span></th>
+                <th onclick="sortTable(13, this)">No Decommissioning (xi)<span class="arrow"></span></th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Data will be populated here -->
+        </tbody>
+    </table>
+</div>
+
+<script>
+    let jsonData = []; // Declare jsonData at the top
+    let data_VEU = [];
+    let data_postcodes = [];
+    let currentSortColumn = -1; // Keep track of the currently sorted column
+    let currentSortDirection = 'ascending'; // Keep track of the sorting direction
+    let HSPFbase, GSFheat, Heating_Savings, TCSPFbase,GSFcool,Cooling_Savings,GHG_Reduction,Location,Climatic_Region;
+    
+    main();
+
+    async function main() {
+        try {
+            data_VEU = await fetchData('https://raw.githubusercontent.com/akjmcdowell/Calculators/refs/heads/main/VEU_6/VEU_6.json');
+            data_postcodes = await fetchData('https://raw.githubusercontent.com/akjmcdowell/Calculators/refs/heads/main/VEU_6/Postcodes.json');
+            
+            if (!Array.isArray(data_VEU)) throw new Error('data_VEU is not an array');
+
+            document.getElementById('brand-filter').value = 'all-brands';
+            document.getElementById('model-filter').value = 'all-models';
+
+            populateTable(data_VEU); // Populate the table initially
+            populateBrandFilter(data_VEU); // Populate the brand filter
+            populateModelFilter(data_VEU); // Populate the model filter
+        } catch (error) {
+            console.error('Error during initialization:', error);
+        }
+    }
+
+    async function fetchData(URL) {
+        const response = await fetch(URL);
+        if (!response.ok) throw new Error('Network response was not ok ' + response.statusText);
+        return await response.json();
+    }
+
+    function updateVEUParameters() {
+        region = document.getElementById("region").value;
+        Climatic_Region = document.getElementById("Climatic_Region").value;
+        sector = document.getElementById("sector").value;
+
+        IndoorUnitCoolingCapacity = parseFloat(document.getElementById("indoor-unit-cooling-capacity").value);
+        if (isNaN(IndoorUnitCoolingCapacity) || IndoorUnitCoolingCapacity === 0) {
+            IndoorUnitCoolingCapacity = 3.6;
+        }
+
+        IndoorUnitHeatingCapacity = parseFloat(document.getElementById("indoor-unit-heating-capacity").value);
+        if (isNaN(IndoorUnitHeatingCapacity) || IndoorUnitHeatingCapacity === 0) {
+            IndoorUnitHeatingCapacity = 3.6;
+        }
+    
+        //GEF = 0.05523;
+        Lifetime_xi = 15;
+        Lifetime = 12;
+        EEF = 0.393; //From 1 February 2025
+
+        switch (tank) {
+            case "new":
+                Lifetime = 15;
+                break;
+            case "existing":
+                Lifetime = 10;
+                break;
+            default:
+                Lifetime = 10;
+        }
+
+        switch (region) {
+            case "metropolitan":
+                RegionalFactor = 0.98;
+                break;
+            case "regional":
+                RegionalFactor = 1.04;
+                break;
+        }
+    }
+
+    // Function to populate the table with data
+    function populateTable(data) {
+        const tableBody = document.getElementById('data-table').getElementsByTagName('tbody')[0];
+        tableBody.innerHTML = ''; // Clear existing data
+        updateVEUParameters();
+        
+        data.forEach(item => {
+            const row = document.createElement('tr');         
+            
+            let OutdoorUnitCoolingCapacity = item["Cooling Capacity (kW)"];
+            let OutdoorUnitHeatingCapacity = item["Heating Capacity (kW)"];
+            let AEER = item["AEER"];
+            let ACOP = item["ACOP"];
+
+            let GEMS_HSPF_Cold_Com = item["GEMS HSPF Cold (com)"];
+            let GEMS_HSPF_Mixed_Com = item["GEMS HSPF Mixed (com)"];
+            let GEMS_HSPF_Cold_Res = item["GEMS HSPF Cold (res)"];
+            let GEMS_HSPF_Mixed_res = item["GEMS HSPF Mixed (res)"];
+  
+            let GEMS_TCSPF_Cold_Com = item["GEMS TCSPF Cold (com)"];
+            let GEMS_TCSPF_Mixed_com = item["GEMS TCSPF Mixed (com)"];
+            let GEMS_TCSPF_Cold_Res = item["GEMS TCSPF Cold (res)"];
+            let GEMS_TCSPF_Mixed_Res = item["GEMS TCSPF Mixed (res)"];
+            
+            let Calculated_HSPF_Cold_Com = item["Calculated HSPF Cold (com)"];
+            let Calculated_HSPF_Mixed_Com = item["Calculated HSPF Mixed (com)"];
+            let Calculated_HSPF_Cold_Res = item["Calculated HSPF Cold (res)"];
+            let Calculated_HSPF_Mixed_Res = item["Calculated HSPF Mixed (res)"];
+
+            let Calculated_TCSPF_Cold_Com = item["Calculated TCSPF Cold (com)"];
+            let Calculated_TCSPF_Mixed_Com = item["Calculated TCSPF Mixed (com)"];
+            let Calculated_TCSPF_Cold_Res = item["Calculated TCSPF Cold (res)"];
+            let Calculated_TCSPF_Mixed_Res = item["Calculated TCSPF Mixed (res)"];
+            
+            
+            if (Capacity<=ExistingCapacity) {
+                CapacityFactor=1
+            } else {
+                CapacityFactor=ExistingCapacity/Capacity;
+            }
+            
+            switch (Refrigerant) {
+                case "R-290":
+                    GWP = 3;
+                    break;
+                case "R-744":
+                    GWP = 1;
+                    break;
+                case "R-134A":
+                    GWP = 1430;
+                    break;
+                case "R-32":
+                    GWP = 675;
+                    break;
+                default:
+                    GWP = 1430;
+            }
+            
+            // Create individual cells (td) and assign values
+            let brandCell = document.createElement('td');
+            brandCell.textContent = item.Brand;
+
+            let modelCell = document.createElement('td');
+            modelCell.textContent = item.Model;
+
+            let ProductCategory = document.createElement('td');
+            ProductCategory.textContent = item.["Product Category No."];
+
+            let VEEC_i = document.createElement('td');
+            let VEEC_ii = document.createElement('td');
+
+            let VEEC_iii = document.createElement('td');
+            let VEEC_iv = document.createElement('td');
+
+            let VEEC_v = document.createElement('td');
+            let VEEC_vi = document.createElement('td');
+
+            let VEEC_vii = document.createElement('td');
+            let VEEC_viii = document.createElement('td');
+
+            let VEEC_ix = document.createElement('td');
+            let VEEC_x = document.createElement('td');
+
+            let VEEC_xi = document.createElement('td');
+
+
+            // Calculate VEEC values
+            
+            VEEC_44Ai_Z4.textContent = Savings_Z4 >= 60 ? Math.round(VEEC_44Ai(CPL_Z4,HPElec_Z4,HPGas_Z4)) : 0;
+            
+            VEEC_44Ai_Z5.textContent = Savings_Z5 >= 60 ? Math.round(VEEC_44Ai(CPL_Z5,HPElec_Z5,HPGas_Z5)) : 0;
+
+            VEEC_44Aii_Z4.textContent = Savings_Z4 >= 60 ? Math.round(VEEC_44Aii(CPL_Z4,HPElec_Z4,HPGas_Z4)) : 0;
+            VEEC_44Aii_Z5.textContent = Savings_Z5 >= 60 ? Math.round(VEEC_44Aii(CPL_Z5,HPElec_Z5,HPGas_Z5)) : 0;
+
+            VEEC_44Aiii_Z4.textContent = Savings_Z4 >= 60 ? Math.round(VEEC_44Aiii(CPL_Z4,HPElec_Z4,HPGas_Z4)) : 0;
+            VEEC_44Aiii_Z5.textContent = Savings_Z5 >= 60 ? Math.round(VEEC_44Aiii(CPL_Z5,HPElec_Z5,HPGas_Z5)) : 0;
+
+
+            // Append cells to the row
+            row.appendChild(brandCell);
+            row.appendChild(modelCell);
+
+            // console.log(VEEC_44Ai(CPL_Z4,HPElec_Z4,HPGas_Z4))
+            // console.log(HPElec_Z4)
+            // console.log(HPGas_Z4)
+            // console.log(CapacityFactor)
+            console.log(zone)
+            if (zone==='zone-4') {
+                row.appendChild(VEEC_44Ai_Z4);  
+                row.appendChild(VEEC_44Aii_Z4);
+                row.appendChild(VEEC_44Aiii_Z4);
+            } else if (zone==='zone-5') {
+                row.appendChild(VEEC_44Ai_Z5);
+                row.appendChild(VEEC_44Aii_Z5);
+                row.appendChild(VEEC_44Aiii_Z5);
+            }
+
+            // console.log(row)
+
+            // Append the row to the table body
+            tableBody.appendChild(row);
+        });
+    }
+
+    function Scenario_i(EEF,HPElec,HPGas) {
+        GIHbase = EEF
+
+        switch (Refrigerant) {
+            case "R-290":
+                GWP = 3;
+                break;
+            case "R-744":
+                GWP = 1;
+                break;
+            case "R-134A":
+                GWP = 1430;
+                break;
+            case "R-32":
+                GWP = 675;
+                break;
+            default:
+                GWP = 1430;
+            }
+
+
+        RefElec = 365*0.905*1.05*CPL/1000;
+        
+        VEEC = (GEF*(RefElec/RepEff)-GEF*HPGas-EEFm*RegionalFactor*(HPElec/3.6))*CapacityFactor*Lifetime+(1430-GWP)*RFE*RfrgCharge;
+        // console.log(VEEC)
+        return VEEC;
+    }
+
+    function VEEC_44Aii(CPL,HPElec,HPGas) {
+        RefElec = 365*0.905*1.05*CPL/1000;
+        VEEC = (EEFm*(RefElec/3.6)*RegionalFactor-GEF*HPGas-EEFm*RegionalFactor*(HPElec/3.6))*CapacityFactor*Lifetime+(1430-GWP)*RFE*RfrgCharge;
+        return VEEC;
+    }
+
+    function VEEC_44Aiii(CPL,HPElec,HPGas) {
+        RefElec = 365*0.905*1.05*CPL/1000;
+        VEEC = (GEF*(RefElec/NewEff)-GEF*HPGas-EEFm*RegionalFactor*(HPElec/3.6))*Lifetime+(1430-GWP)*RFE*RfrgCharge;
+        return VEEC;
+    }
+
+    function populateBrandFilter(data) {
+        const brandFilter = document.getElementById('brand-filter');
+        brandFilter.innerHTML = ''; // Clear existing brands
+
+        // Add the default "All Brands" option
+        const allBrandsOption = document.createElement('option');
+        allBrandsOption.value = 'all-brands';
+        allBrandsOption.textContent = 'All Brands';
+        brandFilter.appendChild(allBrandsOption);
+
+        const uniqueBrands = [...new Set(data.map(item => item.Brand))].sort();
+
+        uniqueBrands.forEach(brand => {
+            const option = document.createElement('option');
+            option.value = brand;
+            option.textContent = brand;
+            brandFilter.appendChild(option);
+        });
+    }
+
+function populateModelFilter(data, selectedBrands = []) {
+    const modelFilter = document.getElementById('model-filter');
+    modelFilter.innerHTML = ''; // Clear existing models
+
+    // Add the default "All Models" option
+    const allModelsOption = document.createElement('option');
+    allModelsOption.value = 'all-models';
+    allModelsOption.textContent = 'All Models';
+    modelFilter.appendChild(allModelsOption);
+
+    const filteredModels = selectedBrands.includes('all-brands') 
+        ? data.map(item => item.Model) // Show all models if "All Brands" is selected
+        : data.filter(item => selectedBrands.includes(item.Brand)).map(item => item.Model);
+
+    const uniqueModels = [...new Set(filteredModels)].sort();
+
+    uniqueModels.forEach(model => {
+        const option = document.createElement('option');
+        option.value = model;
+        option.textContent = model;
+        modelFilter.appendChild(option);
+    });
+}
+
+function updateTableForStorageSizeFilter() {
+    selectedBrands = [];
+    minVolume=document.getElementById('min-storage').value;
+    maxVolume=document.getElementById('max-storage').value;
+    // Filter the data by selected models and storage volume range
+    let filteredData = data_VEU.filter(item => {
+        // Check if the model is in the selected brands (if any) and storage volume is within the range
+        const Volume = item["Total System Tank Volume (L)"];
+        const isModelSelected = selectedBrands.length === 0 || selectedBrands.includes(item.Model);
+        const isVolumeInRange = Volume >= minVolume && Volume <= maxVolume;
+
+        // Return only items that match both conditions
+        return isModelSelected && isVolumeInRange;
+    });
+
+    // Call your function to update the table with the filtered data
+    populateTable(filteredData); // Update the table with filtered data
+}
+
+function updateTableForSelectedBrandsModels() {
+    const selectedBrands = Array.from(document.getElementById('brand-filter').selectedOptions).map(option => option.value);
+    const selectedModels = Array.from(document.getElementById('model-filter').selectedOptions).map(option => option.value);
+
+    let filteredData;
+
+    if (selectedBrands.includes('all-brands') && selectedModels.includes('all-models')) {
+        // Show all data if both "All Brands" and "All Models" are selected
+        filteredData = data_VEU;
+    } else if (selectedBrands.includes('all-brands')) {
+        // If "All Brands" is selected, show all models for selected models
+        filteredData = data_VEU.filter(item => selectedModels.includes(item.Model));
+    } else if (selectedModels.includes('all-models')) {
+        // If "All Models" is selected, show all models for selected brands
+        filteredData = data_VEU.filter(item => selectedBrands.includes(item.Brand));
+    } else {
+        // Filter by both selected brands and models
+        filteredData = data_VEU.filter(item =>
+            selectedBrands.includes(item.Brand) && selectedModels.includes(item.Model)
+        );
+    }
+
+    populateTable(filteredData); // Update the table with filtered data
+}
+
+        // Example of populating filters and updating table on selection change
+    document.getElementById('brand-filter').addEventListener('change', function() {
+        const selectedBrands = Array.from(this.selectedOptions).map(option => option.value);
+        populateModelFilter(data_VEU, selectedBrands);
+
+        // Automatically select "All Models" when a brand is selected
+        const modelFilter = document.getElementById('model-filter');
+        modelFilter.value = 'all-models'; // Set to "All Models"
+
+        updateTableForSelectedBrandsModels();
+    });
+
+    document.getElementById('model-filter').addEventListener('change', updateTableForSelectedBrandsModels);
+
+    function sortTable(columnIndex, th) {
+        const table = document.getElementById('data-table');
+        const tbody = table.querySelector('tbody');
+        const rows = Array.from(tbody.rows);
+        
+        // Determine sort direction
+        let sortDirection = 'descending'; // Default direction
+        if (currentSortColumn === columnIndex) {
+            // Toggle sort direction if clicking the same column
+            sortDirection = currentSortDirection === 'ascending' ? 'descending' : 'ascending';
+        } else {
+            // Sort descending on the first click
+            sortDirection = currentSortColumn === -1 ? 'descending' : 'ascending';
+        }
+
+        // Sort rows based on selected column
+        rows.sort((rowA, rowB) => {
+            const cellA = rowA.cells[columnIndex].innerText;
+            const cellB = rowB.cells[columnIndex].innerText;
+
+            const a = isNaN(cellA) ? cellA : parseFloat(cellA);
+            const b = isNaN(cellB) ? cellB : parseFloat(cellB);
+
+            return sortDirection === 'ascending' ? (a > b ? 1 : -1) : (a < b ? 1 : -1);
+        });
+
+        // Clear existing rows and append sorted rows
+        while (tbody.firstChild) {
+            tbody.removeChild(tbody.firstChild);
+        }
+        rows.forEach(row => tbody.appendChild(row));
+
+        // Update sorting indicators
+        resetSortingIndicators();
+        th.classList.toggle(sortDirection);
+        currentSortColumn = columnIndex;
+        currentSortDirection = sortDirection;
+    }
+
+    function resetSortingIndicators() {
+        const thElements = document.querySelectorAll('#data-table th');
+        thElements.forEach(th => {
+            th.classList.remove('ascending', 'descending'); // Remove sorting classes
+        });
+    }
+
+    function lookupPostcode() {
+        const postcodeInput = document.getElementById('postcode').value.trim();
+        console.log(postcodeInput)
+        const resultDiv = document.getElementById('result');
+
+        // Find the postcode in the data
+        const postcodeInfo = data_postcodes.find(item => item.Postcode === postcodeInput);
+        console.log(postcodeInfo)
+        console.log(data_postcodes.find(item => item.Postcode === postcodeInput))
+
+        if (postcodeInfo) {
+            // Display the results
+            resultDiv.innerHTML = `
+                <strong>Location:</strong> ${postcodeInfo.Location} <br>
+                <strong>Climatic_Region:</strong> ${postcodeInfo.Climatic_Region} <br>
+            `;
+
+            // Change the region dropdown selection based on the postcode
+            const regionDropdown = document.getElementById('Location');
+            regionDropdown.value = postcodeInfo.Location.toLowerCase(); // Convert to lowercase to match dropdown values
+
+            // Trigger change event to update the VEU parameters and table
+            regionDropdown.dispatchEvent(new Event('change'));
+        } else {
+            // Display error message
+            resultDiv.innerHTML = `<strong>No data found for postcode:</strong> ${postcodeInput}`;
+        }
+
+            const selectedBrands = Array.from(document.getElementById('brand-filter').selectedOptions).map(option => option.value);
+            const selectedModels = Array.from(document.getElementById('model-filter').selectedOptions).map(option => option.value);
+
+                // Default to "all-brands" and "all-models" if none selected
+            if (selectedBrands.length === 0) {
+                selectedBrands.push('all-brands');
+            }
+            if (selectedModels.length === 0) {
+        selectedModels.push('all-models');
+        }
+
+               // Filter the data based on current selections
+        const filteredData = (selectedBrands.includes('all-brands') && selectedModels.includes('all-models'))
+        ? data_VEU
+        : data_VEU.filter(item =>
+            (selectedBrands.includes('all-brands') || selectedBrands.includes(item.Brand)) &&
+            (selectedModels.includes('all-models') || selectedModels.includes(item.Model))
+        );
+
+    populateTable(filteredData); // Update table with filtered data
+    }
+
+    function refreshCalculation() {
+        updateVEUParameters(); // Update parameters on region change
+        selectedBrand=document.getElementById('brand-filter').value;
+        selectedModel=document.getElementById('brand-filter').value;
+
+        document.getElementById('brand-filter').value = 'all-brands';
+        document.getElementById('model-filter').value = 'all-models';
+
+        // Reassign selectedBrand and selectedModel after resetting
+        selectedBrand = document.getElementById('brand-filter').value;
+        selectedModel = document.getElementById('model-filter').value;
+
+        const filteredData = (selectedBrand === 'all-brands' && selectedModel === 'all-models')
+            ? data_VEU
+            : data_VEU.filter(item => 
+                (selectedBrand === 'all-brands' || item.Brand === selectedBrand) && 
+                (selectedModel === 'all-models' || item.Model === selectedModel)
+            );
+            
+        populateTable(filteredData); // Update table with filtered data
+    }
+
+    // Add event listener for button click
+    document.getElementById('lookup-button').addEventListener('click', lookupPostcode);
+    document.getElementById('storage-filter').addEventListener('click', updateTableForStorageSizeFilter);
+
+    // Add event listener for Enter key press
+    document.getElementById('postcode').addEventListener('keydown', function(event) {
+        if (event.key === 'Enter') {
+            lookupPostcode();
+        }
+    });
+
+    // Event listeners for selection changes
+    document.getElementById('tank').addEventListener('change',refreshCalculation);
+    document.getElementById('zone').addEventListener('change',refreshCalculation);
+    document.getElementById('region').addEventListener('change',refreshCalculation);
+    document.getElementById('existing-capacity').addEventListener('change',refreshCalculation);
+
+function exportExcel() {
+        // Get the table element
+        const table = document.getElementById('data-table');
+        // Create a new workbook
+        const wb = XLSX.utils.book_new();
+        // Convert the HTML table to a worksheet
+        const ws = XLSX.utils.table_to_sheet(table);
+        // Append the worksheet to the workbook
+        XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+        // Export the workbook as an Excel file
+        // Create a date string in the format YYYY-MM-DD
+        const today = new Date();
+        const dateString = today.toISOString().split('T')[0]; // YYYY-MM-DD format
+        XLSX.writeFile(wb, `VEEC_44_data_${dateString}.xlsx`);
+    }
+
+    document.getElementById('export-button').addEventListener('click', function () {
+        exportExcel();
+    });
+
+
+</script>
+
+</body>
+</html>

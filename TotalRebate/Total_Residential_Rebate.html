@@ -12,13 +12,13 @@
 
 <label for="postcode"><b>Postcode Lookup:</b></label>
 <input type="text" id="postcode" placeholder="Enter postcode" />
-<button id="lookup-button" disabled>Lookup</button>
+<button id="lookup-button" >Lookup</button>
 <div id="result"></div>
 <br>
 
 <div class="filter-container">
     <label for="year"><b>Year of Installation:</b></label>
-    <select id="year" name="year">
+    <select id="year" name="year" >
         <option value="2025">2025</option>
         <option value="2026">2026</option>
         <option value="2027">2027</option>
@@ -31,7 +31,7 @@
 
 <div class="filter-container">
     <label for="DecommissionedProduct"><b>Select decommissioned product:</b></label>
-    <select id="DecommissionedProduct" name="DecommissionedProduct">
+    <select id="DecommissionedProduct" name="DecommissionedProduct" >
         <option value="" selected>-- Select an option --</option>
         <option value="gas">Gas Water Heater</option>
         <option value="electric">Electric Water Heater</option>
@@ -39,17 +39,15 @@
 </div>
 <br>
 
-
-
 <div class="filter-container"> 
     <label for="brand-filter">Select Brand:</label>
-    <select id="brand-filter" disabled>
+    <select id="brand-filter" >
         <option value="" selected>Select a Brand</option>
         <!-- Options will be populated dynamically -->
     </select>
   
     <label for="model-filter">Select Model:</label>
-    <select id="model-filter" disabled>
+    <select id="model-filter" >
         <option value="" selected>Select a Model</option>
         <!-- Options will be populated dynamically -->
     </select>
@@ -59,7 +57,7 @@
 <button id="export-button" disabled>Export Data</button>
 
 <div class="table-container">
-    <table id="data-table">
+    <table id="data-table" style="display:none;">
         <thead>
             <tr>
                 <th>Certificate<span class="arrow"></span></th>
@@ -141,9 +139,37 @@
             // Enable postcode input initially
             document.getElementById('postcode').disabled = false;
             document.getElementById('lookup-button').disabled = false;
+            
+            // Add event listeners
+            setupEventListeners();
         } catch (error) {
             console.error('Error during initialization:', error);
         }
+    }
+
+    function setupEventListeners() {
+        document.getElementById('lookup-button').addEventListener('click', lookupPostcode);
+        document.getElementById('postcode').addEventListener('keydown', function(event) {
+            if (event.key === 'Enter') {
+                lookupPostcode();
+            }
+        });
+
+        document.getElementById('year').addEventListener('change', tryUpdateTable);
+        document.getElementById('DecommissionedProduct').addEventListener('change', function() {
+            document.getElementById('brand-filter').disabled = !this.value;
+            tryUpdateTable();
+        });
+
+        document.getElementById('brand-filter').addEventListener('change', function() {
+            const selectedBrand = this.value;
+            populateModelFilter(all_brand_models, selectedBrand);
+            document.getElementById('model-filter').disabled = !selectedBrand;
+            tryUpdateTable();
+        });
+
+        document.getElementById('model-filter').addEventListener('change', tryUpdateTable);
+        document.getElementById('export-button').addEventListener('click', exportExcel);
     }
 
     async function fetchData(URL) {
@@ -155,6 +181,22 @@
 
     function updateESSParameters() {
         DecommissionedProduct = document.getElementById("DecommissionedProduct").value;
+    }
+
+    function tryUpdateTable() {
+        // Check if we have all required data to populate the table
+        const hasPostcodeData = Zone_CER && Zone_ESS && Zone_VEU;
+        const hasYear = document.getElementById('year').value;
+        const hasDecommissionedProduct = document.getElementById('DecommissionedProduct').value;
+        const hasModel = document.getElementById('model-filter').value;
+        
+        if (hasPostcodeData && hasYear && hasDecommissionedProduct && hasModel) {
+            const selectedBrand = document.getElementById('brand-filter').value;
+            const selectedModel = document.getElementById('model-filter').value;
+            populateTable(selectedBrand, selectedModel);
+            document.getElementById('data-table').style.display = 'table';
+            document.getElementById('export-button').disabled = false;
+        }
     }
 
     function populateTable(selectedBrand, selectedModel) {
@@ -182,7 +224,6 @@
 
         // STC Price
         let STC_Price_Cell = document.createElement('td');
-        //let stcPrice = data_CertificatePrices.STC_Price || 'Not available';
         let STC_Price = data_CertificatePrices.STC_Price ? data_CertificatePrices.STC_Price : 'Not available';
         STC_Price_Cell.textContent =  `${STC_Price}`;
         STCrow.appendChild(STC_Price_Cell);
@@ -210,8 +251,6 @@
         STCrow.appendChild(STCRebateCell);
 
         tableBody.appendChild(STCrow);    
-
-
 
         // add escs
         updateESSParameters();
@@ -276,17 +315,7 @@
         // Append the row to the table body
         tableBody.appendChild(ESCrow);
 
-        // Show the table if all inputs are provided
-        if (Zone_ESS && DecommissionedProduct) {
-            document.getElementById('data-table').style.display = 'table';
-            document.getElementById('export-button').disabled = false;
-        }
-
-        
         // ADD VEECS
-        //check if brand model is in veu
-        // Check if the selected brand and model exist in data_ESS
-
         let FoundInVEU1D3C = false;
         let VEU1D3CItemData = null;
         
@@ -328,8 +357,6 @@
             } else if (Zone_VEU == 5 && DecommissionedProduct === 'electric') {
                 num_VEECs = Bs_Z5 > 0 ? Math.round((AF_1D - SEF_1D * Bs_Z5 - AEF_1D * Be_Z5) * EEF) : 0;
             }
-
-            
         }
 
         // Create and append the No. Certificates cell
@@ -368,7 +395,6 @@
         TotalRebateRow.appendChild(TotalRebateCell);
 
         tableBody.appendChild(TotalRebateRow);
-
     }
 
     function populateBrandFilter(data) {
@@ -415,12 +441,11 @@
         Zone_ESS = postcodeInfo ? postcodeInfo.Zone_ESS : null;
         Region = postcodeInfo ? postcodeInfo.Location : null;
         Zone_4234 = postcodeInfo ? postcodeInfo.Zone_4234 : null;
-        Zone_CER = Zone_4234.charAt(2)
+        Zone_CER = Zone_4234 ? Zone_4234.charAt(2) : null;
         Zone_VEU = postcodeInfo ? postcodeInfo.Zone_VEU : null;
 
         if (Region === 'Metropolitan') {
             ESS_RegionalFactor = 1;
-            //VEU_RegionalFactor = 0.98;
             AF_1D = 33.4;
             SEF_1D = 3.27;
             AEF_1D = 3.27;
@@ -429,7 +454,6 @@
             AEF_3C = 4.17;
         } else if (Region === 'Regional') {
             ESS_RegionalFactor = 1.03;
-            //VEU_RegionalFactor = 1.04;
             AF_1D = 35.44;
             SEF_1D = 3.47;
             AEF_1D = 3.47;
@@ -448,48 +472,16 @@
                 <strong>VEU Zone:</strong> ${postcodeInfo.Zone_VEU} <br>
             `;
 
-            // Enable the next input (tank selection)
+            // Enable the next inputs
             document.getElementById('year').disabled = false;
+            document.getElementById('DecommissionedProduct').disabled = false;
+            
+            // Try to update the table if we have enough data
+            tryUpdateTable();
         } else {
             // Display error message
             resultDiv.innerHTML = `<strong>No data found for postcode:</strong> ${postcodeInput}`;
         }
-    }
-
-    // Event listeners
-    document.getElementById('lookup-button').addEventListener('click', lookupPostcode);
-    document.getElementById('postcode').addEventListener('keydown', function(event) {
-        if (event.key === 'Enter') {
-            lookupPostcode();
-        }
-    });
-
-    document.getElementById('DecommissionedProduct').addEventListener('change', function() {
-        // Enable the next input (brand-filter)
-        document.getElementById('brand-filter').disabled = false;
-    });
-
-    document.getElementById('brand-filter').addEventListener('change', function() {
-        const selectedBrand = this.value;
-        populateModelFilter(all_brand_models, selectedBrand);
-
-        // Enable the next input (model filter)
-        document.getElementById('model-filter').disabled = false;
-        
-        // Update the table with the selected brand
-        //updateTableForSelectedBrandModel();
-    });
-
-    document.getElementById('model-filter').addEventListener('change', function() {
-        // Update the table with the selected model
-        updateTableForSelectedBrandModel();
-    });
-
-    function updateTableForSelectedBrandModel() {
-        const selectedBrand = document.getElementById('brand-filter').value;
-        const selectedModel = document.getElementById('model-filter').value;
-        
-        populateTable(selectedBrand, selectedModel);
     }
 
     function exportExcel() {
@@ -501,10 +493,6 @@
         const dateString = today.toISOString().split('T')[0];
         XLSX.writeFile(wb, `ESC_IHEAB_data_${dateString}.xlsx`);
     }
-
-    document.getElementById('export-button').addEventListener('click', function () {
-        exportExcel();
-    });
 </script>
 
 </body>
